@@ -41,23 +41,9 @@ echo 'deb [arch=amd64] http://download.pegasus.isi.edu/pegasus/ubuntu bionic mai
 apt-get update
 apt-get install -y pegasus
 
-# install WfCommons
-cd $HOME
-git clone https://github.com/wfcommons/wfcommons
-cd wfcommons
-pip install -e .
-cd wfcommons/wfbench
-g++ -o cpu_benchmark cpu_benchmark.cpp
-cp cpu_benchmark $HOME
-
 # install dependencies
 cd $HOME
 pip install pandas filelock
 apt install -y stress-ng
 chmod -r 777 /var/lib/condor/execute
-
-# configure environment
-cd $HOME
-cp calibration_experiments/scripts/exp.py .
-cp calibration_experiments/scripts/run-workflow.sh .
 
