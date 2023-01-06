@@ -45,5 +45,5 @@ apt-get install -y pegasus
 cd $HOME
 pip install pandas filelock
 apt install -y stress-ng
-chmod -r 777 /var/lib/condor/execute
+chmod -R 777 /var/lib/condor/execute
 
