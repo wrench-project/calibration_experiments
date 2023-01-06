@@ -20,7 +20,7 @@ tar_dir.mkdir(parents=True, exist_ok=True)
 
 # recipes
 for recipe in [SeismologyRecipe]:
-    for cpu_work in [50]:
+    for cpu_work in [200]:
         for num_tasks in [200]:
             for data_footprint in [10]:
                 percent_cpu = 0.6
@@ -48,13 +48,14 @@ for recipe in [SeismologyRecipe]:
                 proc.wait()
 
                 # compress run dir
-                dagman_path = work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out")
-                run_dir = dagman_path.parent
-                app = recipe.__name__.replace('Recipe', '')
-                tar_file = tar_dir.joinpath(f"{app.lower()}-{num_tasks}-{cpu_work}-{data_footprint}-{percent_cpu}-"
-                                            f"{machine}.tar.gz")
-                with tarfile.open(tar_file, "w:gz") as tar:
-                    tar.add(run_dir, arcname=run_dir.name)
+                for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
+                    run_dir = dagman_path.parent
+                    app = recipe.__name__.replace('Recipe', '')
+                    tar_file = tar_dir.joinpath(f"{app.lower()}-{num_tasks}-{cpu_work}-{data_footprint}-{percent_cpu}-"
+                                                f"{machine}.tar.gz")
+                    with tarfile.open(tar_file, "w:gz") as tar:
+                        tar.add(run_dir, arcname=run_dir.name)
 
-                # cleanup
-                shutil.rmtree(work_dir)
+                    # cleanup
+                    shutil.rmtree(work_dir)
+                    break
