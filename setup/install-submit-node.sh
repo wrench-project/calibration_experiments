@@ -46,6 +46,7 @@ apt-get install -y pegasus
 cd $HOME
 git clone https://github.com/wfcommons/wfcommons
 cd wfcommons
+git checkout feature/wfbench
 pip install -e .
 cd wfcommons/wfbench
 g++ -o cpu_benchmark cpu_benchmark.cpp
