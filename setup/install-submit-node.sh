@@ -2,6 +2,8 @@
 
 CONDOR_HOST=$1
 
+ufw disable
+
 # install HTCondor
 apt-get update && apt-get install -y curl
 curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run
@@ -43,17 +45,18 @@ apt-get update
 apt-get install -y pegasus
 
 # install WfCommons
-cd $HOME
+cd /home/cc
 git clone https://github.com/wfcommons/wfcommons
+chown -R cc:cc /home/cc/wfcommons
 cd wfcommons
 git checkout feature/wfbench
 pip install -e .
 cd wfcommons/wfbench
-g++ -o cpu_benchmark cpu_benchmark.cpp
-cp cpu_benchmark $HOME
+g++ -o cpu-benchmark cpu-benchmark.cpp
+cp cpu-benchmark /home/cc
 
 # configure environment
-cd $HOME
+cd /home/cc
 cp calibration_experiments/scripts/exp.py .
 cp calibration_experiments/scripts/run-workflow.sh .
 chown cc:cc exp.py run-workflow.sh
