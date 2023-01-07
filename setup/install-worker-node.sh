@@ -35,12 +35,6 @@ EOT
 
 systemctl restart condor
 
-# install Pegasus
-wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | sudo apt-key add -
-echo 'deb [arch=amd64] http://download.pegasus.isi.edu/pegasus/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/pegasus.list
-apt-get update
-apt-get install -y pegasus
-
 # install dependencies
 cd $HOME
 pip install pandas filelock
