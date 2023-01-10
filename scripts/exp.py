@@ -20,9 +20,9 @@ tar_dir.mkdir(parents=True, exist_ok=True)
 
 # recipes
 for recipe in [SeismologyRecipe]:
-    for cpu_work in [200]:
-        for num_tasks in [200]:
-            for data_footprint in [10]:
+    for cpu_work in [250, 500, 1000, 10000, 20000]:
+        for num_tasks in [250, 500, 1000]:
+            for data_footprint in [10, 100, 1000, 10000]:
                 percent_cpu = 0.6
                 # work dir
                 work_dir = pathlib.Path("./wfbench-workflow")
