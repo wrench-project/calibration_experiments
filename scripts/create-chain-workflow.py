@@ -19,8 +19,8 @@ import pathlib
 
 # commands
 class Commands(Enum):
-    Sleep = "/boot-script/pegasus-files/bin/sleep.py"
-    WfBench = "/boot-script/pegasus-files/wfcommons/wfcommons/wfbench/wfbench.py"
+    Sleep = "/home/cc/calibration_experiments/bin/sleep.py"
+    WfBench = "/home/cc/wfcommons/wfcommons/wfbench/wfbench.py"
 
 # method to check minimum num_tasks
 def check_num_tasks(num_tasks):
