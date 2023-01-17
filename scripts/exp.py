@@ -9,7 +9,7 @@ import subprocess
 import tarfile
 
 from datetime import datetime
-from wfcommons import SeismologyRecipe, MontageRecipe, GenomeRecipe, SoykbRecipe
+from wfcommons import SeismologyRecipe, MontageRecipe, GenomeRecipe, SoykbRecipe, CyclesRecipe, EpigenomicsRecipe, BwaRecipe
 from wfcommons.wfbench import WorkflowBenchmark
 from wfcommons.wfbench.translator import PegasusTranslator
 
@@ -19,7 +19,7 @@ tar_dir = pathlib.Path("./runs")
 tar_dir.mkdir(parents=True, exist_ok=True)
 
 # recipes
-for recipe in [SeismologyRecipe]:
+for recipe in [SeismologyRecipe, MontageRecipe, GenomeRecipe, CyclesRecipe, EpigenomicsRecipe, BwaRecipe]:
     for cpu_work in [50, 500, 5000, 10000, 20000]:
         for num_tasks in [250, 500, 1000]:
             for data_footprint in [10, 100, 1000, 10000]:
