@@ -19,7 +19,7 @@ import pathlib
 
 # commands
 class Commands(Enum):
-    Sleep = "/home/cc/calibration_experiments/bin/sleep.py"
+    Sleep = "/bin/sleep"
     WfBench = "/home/cc/wfcommons/wfcommons/wfbench/wfbench.py"
 
 # method to check minimum num_tasks
