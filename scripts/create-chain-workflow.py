@@ -47,7 +47,7 @@ def get_arguments(i):
     arguments = []
 
     if args.command == "Sleep":
-        arguments.append(args.seconds)
+        arguments.append(f"\"{args.seconds}\"")
     elif args.command == "WfBench":
         arguments = [
             "chain_" + str(i).zfill(8),
