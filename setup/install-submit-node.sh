@@ -59,4 +59,5 @@ cp bin/cpu-benchmark /home/cc
 cd /home/cc
 cp calibration_experiments/scripts/exp.py .
 cp calibration_experiments/scripts/run-workflow.sh .
+cp calibration_experiments/scripts/run-chain-workflows.py .
 chown cc:cc exp.py run-workflow.sh
