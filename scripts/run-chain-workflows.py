@@ -24,6 +24,12 @@ for n in range(num_runs):
     work_dir = pathlib.Path("./wfbench-workflow")
     work_dir.mkdir(exist_ok=False)
 
+    input_dir = work_dir.joinpath("data")
+    input_dir.mkdir()
+    fileSizeInBytes = 1024 * 1024 # 1 MB
+    with open(input_dir.joinpath("chain_00000001_input.txt"), 'wb') as fout:
+        fout.write(os.urandom(fileSizeInBytes))
+        
     workflow_path = pathlib.Path("./chain-workflow.json")
     translator = PegasusTranslator(workflow_path)
     translator.translate(work_dir.joinpath("pegasus-workflow.py"))
