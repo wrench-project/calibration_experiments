@@ -51,9 +51,9 @@ chown -R cc:cc /home/cc/wfcommons
 cd wfcommons
 #git checkout feature/wfbench
 pip install -e .
-#cd wfcommons/wfbench
+#cd bin
 #g++ -o cpu-benchmark cpu-benchmark.cpp
-#cp cpu-benchmark /home/cc
+cp bin/cpu-benchmark /home/cc
 
 # configure environment
 cd /home/cc
