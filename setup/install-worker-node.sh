@@ -39,7 +39,7 @@ systemctl restart condor
 cd $HOME
 pip install pandas filelock
 apt install -y stress-ng
-mkdir /var/lib/condor
-mkdir /var/lib/condor/execute
+mkdir -p /var/lib/condor
+mkdir -p /var/lib/condor/execute
 chown condor:condor -R /var/lib/condor
 chmod -R 777 /var/lib/condor/execute
