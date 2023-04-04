@@ -34,6 +34,7 @@ NUM_CPUS = 16
 EOT
 
 systemctl restart condor
+sleep 10
 
 # install dependencies
 cd $HOME
