@@ -16,6 +16,9 @@ Scripts in this folder should be run from the **submit** node.
 8. While the experiments are running, leave the screen session by typing: `Ctrl + A` then `Ctrl + D`
 9. Once experiment executions are completed, you can find the logs of the executions at: `/home/cc/runs/chain-workflow-<MACHINE_NAME>-<RUN_NUM>.tar.gz`
 
+
+There is a **master script** called <tt>RUN_CHAINS.sh</tt> that runs all chain experiments for 36 combinations of parameter values, with 10 samples for each combinationi.
+
 ## Running Fork-Join Workflows
 
 1. SSH to the submit node instance (`ssh cc@<PUBLIC_IP_ADDRESS>`)
