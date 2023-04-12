@@ -57,7 +57,7 @@ cp bin/cpu-benchmark /home/cc
 
 # configure environment
 cd /home/cc
-cp calibration_experiments/scripts/exp.py .
+cp calibration_experiments/scripts/RUN_CHAINS.sh .
 cp calibration_experiments/scripts/run-workflow.sh .
 cp calibration_experiments/scripts/run-chain-workflows.py .
 cp calibration_experiments/scripts/run-fork-join-workflows.py .
