@@ -14,8 +14,8 @@ ARCH=$1
 for NUM_TASKS in 1 5 10; do
 	for CPU_WORK in 0 500 5000 10000; do
 		for DATA_FOOTPRINT in 0 1000 10000; do
-			KEY=chain-workflow_tasks_${NUM_TASKS}_cpu_work_${CPU_WORK}_data_footprint_${DATA_FOOTPRINT}_percent_cpu_${PERCENT_CPU}_architecture_${ARCH}
-			if [ ! -d "runs_${KEY}" ]
+			KEY=chain-${NUM_TASKS}-${CPU_WORK}-${DATA_FOOTPRINT}-${PERCENT_CPU}-${ARCH}
+			if [ ! -d "${KEY}" ]
 			then
 				echo "RUNNING " ${KEY}
 				/bin/rm -rf wfbench-workflow
@@ -24,7 +24,7 @@ for NUM_TASKS in 1 5 10; do
 				echo "RUNNING WORKFLOW..."
 				python calibration_experiments/scripts/run-chain-workflows.py ${ARCH} ${NUM_SAMPLES}
 				echo "WORKFLOW DONE!"
-				mv runs runs_${KEY}
+				mv runs ${KEY}
 			else
 				echo "${KEY} ALREADY THERE .... SKIPPING!"
 			fi
