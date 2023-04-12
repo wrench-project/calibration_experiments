@@ -50,6 +50,7 @@ git clone https://github.com/wfcommons/wfcommons
 chown -R cc:cc /home/cc/wfcommons
 cd wfcommons
 #git checkout feature/wfbench
+pip install python-dateutil==2.8.2
 pip install -e .
 #cd bin
 #g++ -o cpu-benchmark cpu-benchmark.cpp
