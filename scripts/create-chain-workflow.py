@@ -92,19 +92,19 @@ def get_files(i):
             files.append({
                 "link": "input",
                 "name": "chain_" + str(i).zfill(8) + "_input.txt",
-                "size": math.ceil(args.data / args.num_tasks)
+                "size": math.ceil(1000 * args.data / args.num_tasks)  # KB
             })
         else:
             files.append({
                 "link": "input",
                 "name": "chain_" + str(i - 1).zfill(8) + "_output.txt",
-                "size": math.ceil(args.data / args.num_tasks)
+                "size": math.ceil(1000 * args.data / args.num_tasks)  # KB
             })
 
         files.append({
             "link": "output",
             "name": "chain_" + str(i).zfill(8) + "_output.txt",
-            "size": math.ceil(args.data / args.num_tasks)
+            "size": math.ceil(1000 * args.data / args.num_tasks)  # KB
         })
 
     return files

@@ -33,13 +33,10 @@ for n in range(num_runs):
     translator.translate(work_dir.joinpath("pegasus-workflow.py"))
 
     # Create input file 
-#    fileSizeInBytes = 1024 * 1024 # 1 MB
     f = open("./chain-workflow.json")
     data = json.load(f)
-    fileSizeInBytes = data["workflow"]["tasks"][0]["files"][0]["size"] * 1000;
     f.close()
-    print(fileSizeInBytes)
-
+    fileSizeInBytes = data["workflow"]["tasks"][0]["files"][0]["size"] * 1000; # KB
     with open(input_dir.joinpath("chain_00000001_input.txt"), 'wb') as fout:
         fout.write(os.urandom(fileSizeInBytes))
 
