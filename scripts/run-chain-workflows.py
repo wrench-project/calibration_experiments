@@ -26,13 +26,22 @@ for n in range(num_runs):
 
     input_dir = work_dir.joinpath("data")
     input_dir.mkdir()
-    fileSizeInBytes = 1024 * 1024 # 1 MB
-    with open(input_dir.joinpath("chain_00000001_input.txt"), 'wb') as fout:
-        fout.write(os.urandom(fileSizeInBytes))
+
         
     workflow_path = pathlib.Path("./chain-workflow.json")
     translator = PegasusTranslator(workflow_path)
     translator.translate(work_dir.joinpath("pegasus-workflow.py"))
+
+    # Create input file 
+#    fileSizeInBytes = 1024 * 1024 # 1 MB
+    f = open("./chain-workflow.json")
+    data = json.load(f)
+    fileSizeInBytes = data["workflow"]["tasks"][0]["files"][0]["size"] * 1000;
+    f.close()
+    print(fileSizeInBytes)
+
+    with open(input_dir.joinpath("chain_00000001_input.txt"), 'wb') as fout:
+        fout.write(os.urandom(fileSizeInBytes))
 
     # submit workflow
     proc = subprocess.Popen(["bash", "run-workflow.sh"])
