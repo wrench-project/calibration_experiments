@@ -6,7 +6,7 @@ ufw disable
 
 # install HTCondor
 apt-get update && apt-get install -y curl
-curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run
+curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run --channel stable
 rm /etc/condor/config.d/00-minicondor
 cat <<EOT>> /etc/condor/config.d/00-minicondor
 use ROLE: CentralManager
@@ -42,7 +42,7 @@ systemctl restart condor
 wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | sudo apt-key add -
 echo 'deb [arch=amd64] http://download.pegasus.isi.edu/pegasus/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/pegasus.list
 apt-get update
-apt-get install -y pegasus
+apt-get install -y pegasus=5.0.3-1+ubuntu18
 
 # install WfCommons
 cd /home/cc
