@@ -4,7 +4,7 @@ CONDOR_HOST=$1
 
 # install HTCondor
 apt-get update && apt-get install -y curl
-curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run
+curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run --channel stable
 rm /etc/condor/config.d/00-minicondor
 cat <<EOT>> /etc/condor/config.d/00-minicondor
 use ROLE: Execute
