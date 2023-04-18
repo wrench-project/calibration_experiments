@@ -38,7 +38,7 @@ for recipe in [BwaRecipe]:
                     benchmark_path = benchmark.create_benchmark(save_dir=work_dir,
                                                                 cpu_work=cpu_work,
                                                                 data=data_footprint,
-                                                                percent_cpu=percent_cpu)
+                                                                percent_cpu=percent_cpu,
                                                                 lock_files_folder=lock_files_folder)
     
                     # generate pegasus workflow
