@@ -63,4 +63,5 @@ cp calibration_experiments/scripts/run-workflow.sh .
 cp calibration_experiments/scripts/run-chain-workflows.py .
 cp calibration_experiments/scripts/run-fork-join-workflows.py .
 cp calibration_experiments/scripts/run_workflow_benchmark_experiments.py .
-chown cc:cc RUN_CHAINS.sh run-workflow.sh run-chain-workflows.py run-fork-join-workflows.py run_workflow_benchmark_experiments.py
+cp calibration_experiments/scripts/run_experiments.py .
+chown cc:cc RUN_CHAINS.sh run-workflow.sh run-chain-workflows.py run-fork-join-workflows.py run_workflow_benchmark_experiments.py run_experiments.py
