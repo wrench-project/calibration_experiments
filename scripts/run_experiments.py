@@ -309,10 +309,11 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
         # add task to workflow
         workflow_json["workflow"]["tasks"].append(task)
 
-    with open(str(work_dir.absolute()) + "/workflow.json", 'w') as f:
+    file_name = f"chain-benchmark-{desired_num_tasks}"
+    with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
         f.write(json.dumps(workflow_json, indent=4))
 
-    return pathlib.Path(str(work_dir.absolute()) + "/workflow.json")
+    return pathlib.Path(str(work_dir.absolute()) + "/" + filename)
 
 
 def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footprint, lock_files_folder, work_dir):
@@ -446,10 +447,11 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         # add task to workflow
         workflow_json["workflow"]["tasks"].append(task)
 
-        with open(str(work_dir.absolute()) + "/workflow.json", 'w') as f:
+        file_name = f"forkjoin-benchmark-{desired_num_tasks}"
+        with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
             f.write(json.dumps(workflow_json, indent=4))
 
-        return pathlib.Path(str(work_dir.absolute()) + "/workflow.json")
+        return pathlib.Path(str(work_dir.absolute()) + "/" + filename)
 
 
 def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint):
@@ -476,7 +478,7 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
                     pass
             except (FileNotFoundError, OSError) as e:
                 sys.stderr.write(f"Could not find folder to create lock files: {lock_files_folder.resolve()}\n"
-                                    f"You will need to create them manually: 'cores.txt.lock' and 'cores.txt'\n")
+                                 f"You will need to create them manually: 'cores.txt.lock' and 'cores.txt'\n")
         if workflow == "chain":
             benchmark_path = create_chain_workflow(desired_num_tasks=desired_num_tasks,
                                                    cpu_fraction=cpu_fraction,
@@ -497,6 +499,18 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
             raise Exception(f"Unknown workflow {workflow}")
 
     return benchmark_path
+
+
+def create_work_dir(path):
+    shutil.rmtree(path, ignore_errors=True)
+    work_dir = pathlib.Path(path)
+    work_dir.mkdir()
+    return work_dir
+
+
+def create_pegasus_workflow(work_dir, json_file_path):
+    translator = PegasusTranslator(json_file_path)
+    translator.translate(json_file_path)
 
 
 def main():
@@ -526,12 +540,15 @@ def main():
         for cpu_fraction in config["cpu_fraction"]:
             for cpu_work in config["cpu_work"]:
                 for data_footprint in config["data_footprint"]:
-                    tmp_dir_path = "/tmp/wfbench-workflow"
-                    shutil.rmtree(tmp_dir_path, ignore_errors=True)
-                    work_dir = pathlib.Path(tmp_dir_path)
-                    work_dir.mkdir()
-                    benchmark_json_path = create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint)
-                    print("---> " + str(benchmark_json_path.absolute()))
+
+                    # Create a fresh working directory
+                    work_dir = create_work_dir("/tmp/wfbench-workflow")
+
+                    # Create the benchmark workflow
+                    benchmark_path = create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint)
+
+                    # Create Pegasus workflow
+                    create_pegasus_workflow(work_dir, benchmark_path)
 
 
 

@@ -27,7 +27,6 @@ for n in range(num_runs):
     input_dir = work_dir.joinpath("data")
     input_dir.mkdir()
 
-        
     workflow_path = pathlib.Path("./chain-workflow.json")
     translator = PegasusTranslator(workflow_path)
     translator.translate(work_dir.joinpath("pegasus-workflow.py"))
