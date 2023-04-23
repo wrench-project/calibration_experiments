@@ -538,12 +538,13 @@ def run_pegasus_workflow(work_dir, cpu_benchmark_dir):
     proc.wait()
 
 
-def process_pegasus_workflow_execution(work_dir, tar_file_to_generate):
+def process_pegasus_workflow_execution(work_dir, output_dir, tar_file_to_generate_prefix):
 
     for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
         run_dir = dagman_path.parent
-        with tarfile.open(tar_file_to_generate, "w:gz") as tar:
-            tar.add(run_dir, arcname=run_dir.name)
+        renamed_dir = run_dir.replace(work_dir.joinpath(tar_file_to_generate_prefix))
+        with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz")), "w:gz") as tar:
+            tar.add(renamed_dir, arcname=run_dir.name)
 
 
 def main():
@@ -575,13 +576,11 @@ def main():
                     for trial in range(0, config["num_trials"]):
 
                         output_dir = pathlib.Path(config["output_dir"])
-                        tar_file_to_generate = output_dir.joinpath(
-                            config["workflow"] +
-                            f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" +
-                            config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}.tar.gz")
+                        tar_file_to_generate_prefix = config["workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
+                                                      config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}"
 
-                        if tar_file_to_generate.is_file():
-                            sys.stderr.write("File " + str(tar_file_to_generate) + ": file already exists. [SKIPPING]\n")
+                        if output_dir.joinpath(tar_file_to_generate_prefix+".tgz").is_file():
+                            sys.stderr.write(f"File {tar_file_to_generate_prefix}: file already exists. [SKIPPING]\n")
                             continue
 
                         # Create a fresh working directory
@@ -598,7 +597,7 @@ def main():
                         run_pegasus_workflow(work_dir, str(pathlib.Path.home()))
 
                         # Process result
-                        process_pegasus_workflow_execution(work_dir, tar_file_to_generate)
+                        process_pegasus_workflow_execution(work_dir, output_dir, tar_file_to_generate_prefix)
 
                         # Remove working directory
                         shutil.rmtree(str(work_dir.absolute()), ignore_errors=True)
