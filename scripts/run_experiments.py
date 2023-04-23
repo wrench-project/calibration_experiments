@@ -585,7 +585,7 @@ def main():
                             continue
 
                         # Create a fresh working directory
-                        work_dir = create_work_dir(os.path.expanduser('~')+"wfbench-workflow")
+                        work_dir = create_work_dir(os.path.expanduser('~')+"/wfbench-workflow")
 
                         # Create the benchmark workflow
                         benchmark_path = create_benchmark(work_dir, config["workflow"], desired_num_tasks,
