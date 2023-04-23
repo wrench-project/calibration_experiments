@@ -299,7 +299,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
-                "program": "/home/cc/wfcommons/wfcommons/wfbench/wfbench.py",
+                "program": os.path.expanduser('~') + "/wfcommons/wfcommons/wfbench/wfbench.py",
                 "arguments": get_arguments(i)
             },
             "parents": get_parents(i),
@@ -414,6 +414,9 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         return files
 
     # create workflow
+    if desired_num_tasks < 4:
+        raise Exception("Cannot create a forkjoin benchmark with fewer than 4 tasks")
+
     file_size_in_kb = math.ceil((data_footprint / (desired_num_tasks + 1)) / 1000.0)
 
     workflow_json = {
@@ -445,7 +448,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
-                "program": "/home/cc/wfcommons/wfcommons/wfbench/wfbench.py",
+                "program": os.path.expanduser('~') + "/wfcommons/wfcommons/wfbench/wfbench.py",
                 "arguments": get_arguments(i)
             },
             "parents": get_parents(i),
@@ -474,8 +477,6 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
 
     lock_files_folder = pathlib.Path("/var/lib/condor/execute")
     os.system(f"sudo chmod 777 {lock_files_folder}")
-
-    print("WORK DIR = " + str(work_dir.absolute()))
 
     if workflow_recipe_map[workflow]:
         # create benchmark
@@ -584,7 +585,7 @@ def main():
                             continue
 
                         # Create a fresh working directory
-                        work_dir = create_work_dir("/tmp/wfbench-workflow")
+                        work_dir = create_work_dir(os.path.expanduser('~')+"wfbench-workflow")
 
                         # Create the benchmark workflow
                         benchmark_path = create_benchmark(work_dir, config["workflow"], desired_num_tasks,
@@ -594,7 +595,7 @@ def main():
                         create_pegasus_workflow(work_dir, benchmark_path)
 
                         # Run the Pegasus workflow
-                        run_pegasus_workflow(work_dir, "/home/cc")
+                        run_pegasus_workflow(work_dir, os.path.expanduser('~'))
 
                         # Process result
                         process_pegasus_workflow_execution(work_dir, tar_file_to_generate)
