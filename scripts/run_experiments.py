@@ -326,7 +326,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
 
 def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footprint, lock_files_folder, work_dir):
     ###
-    # Creates a fork-join workflow
+    # Creates a forkjoin workflow
     #      1
     #     /|\
     #    / | \
@@ -417,7 +417,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
     file_size_in_kb = math.ceil((data_footprint / (desired_num_tasks + 1)) / 1000.0)
 
     workflow_json = {
-        "name": "Fork-Join-Benchmark",
+        "name": "Forkjoin-Benchmark",
         "description": "Instance generated with WfCommons - https://wfcommons.org",
         "createdAt": str(datetime.utcnow().isoformat()),
         "schemaVersion": "1.3",
@@ -535,16 +535,11 @@ def run_pegasus_workflow(work_dir, cpu_benchmark_dir):
     proc.wait()
 
 
-def process_pegasus_workflow_execution(work_dir, workflow_name, desired_num_tasks,
-                                       cpu_work, cpu_fraction, data_footprint, architecture,
-                                       num_compute_nodes, output_dir, trial):
-
-    tar_file = output_dir.joinpath(f"{workflow_name}-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-"
-                                   f"{architecture}-{num_compute_nodes}-{trial}.tar.gz")
+def process_pegasus_workflow_execution(work_dir, tar_file_to_generate):
 
     for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
         run_dir = dagman_path.parent
-        with tarfile.open(tar_file, "w:gz") as tar:
+        with tarfile.open(tar_file_to_generate, "w:gz") as tar:
             tar.add(run_dir, arcname=run_dir.name)
 
 
@@ -571,10 +566,21 @@ def main():
         sys.exit(0)
 
     for desired_num_tasks in sorted(config["workflow_size"].keys()):
-        for cpu_fraction in config["cpu_fraction"]:
-            for cpu_work in config["cpu_work"]:
+        for cpu_work in config["cpu_work"]:
+            for cpu_fraction in config["cpu_fraction"]:
                 for data_footprint in config["data_footprint"]:
                     for trial in range(0, config["num_trials"]):
+
+                        output_dir = pathlib.Path(config["output_dir"])
+                        tar_file_to_generate = output_dir.joinpath(
+                            config["workflow"] +
+                            f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" +
+                            config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}.tar.gz")
+
+                        print("CHECKING IF IS FILE: " + str(tar_file_to_generate))
+                        if tar_file_to_generate.is_file():
+                            sys.stderr.write("File " + str(tar_file_to_generate) + ": file already exists. [SKIPPING]\n")
+                            continue
 
                         # Create a fresh working directory
                         work_dir = create_work_dir("/tmp/wfbench-workflow")
@@ -590,63 +596,7 @@ def main():
                         run_pegasus_workflow(work_dir, "/home/cc")
 
                         # Process result
-                        process_pegasus_workflow_execution(work_dir, config["workflow"],
-                                                           desired_num_tasks,
-                                                           cpu_work, cpu_fraction, data_footprint,
-                                                           config["architecture"], config["num_compute_nodes"],
-                                                           pathlib.Path(config["output_dir"]), trial)
-
-
-
-
-    # machine = sys.argv[1]
-    #
-    # tar_dir = pathlib.Path("./runs")
-    # tar_dir.mkdir(parents=True, exist_ok=True)
-    #
-    #
-    # # recipes
-    # for recipe in [BwaRecipe]:
-    #     for cpu_work in [15000]:
-    #         for num_tasks in [200, 500, 1000, 2000]:
-    #             for data_footprint in [100000]:
-    #                 for trial in range(0,5):
-    #                     percent_cpu = 0.6
-    #                     # work dir
-    #                     work_dir = pathlib.Path("./wfbench-workflow")
-    #                     work_dir.mkdir(exist_ok=False)
-    #
-    #                     lock_files_folder = pathlib.Path("/var/lib/condor/execute")
-    #                     os.system(f"sudo chmod 777 {lock_files_folder}")
-    #
-    #                     # create benchmark
-    #                     benchmark = WorkflowBenchmark(recipe=recipe, num_tasks=num_tasks)
-    #                     benchmark_path = benchmark.create_benchmark(save_dir=work_dir,
-    #                                                                 cpu_work=cpu_work,
-    #                                                                 data=data_footprint,
-    #                                                                 percent_cpu=percent_cpu,
-    #                                                                 lock_files_folder=lock_files_folder)
-    #
-    #                     # generate pegasus workflow
-    #                     translator = PegasusTranslator(benchmark.workflow)
-    #                     translator.translate(work_dir.joinpath("pegasus-workflow.py"))
-    #
-    #                     # submit workflow
-    #                     proc = subprocess.Popen(["bash", "run-workflow.sh"])
-    #                     proc.wait()
-    #
-    #                     # compress run dir
-    #                     app = recipe.__name__.replace('Recipe', '')
-    #                     tar_file = tar_dir.joinpath(f"{app.lower()}-{num_tasks}-{cpu_work}-{data_footprint}-{percent_cpu}-"
-    #                                                 f"{machine}-{trial}.tar.gz")
-    #                     for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
-    #                         run_dir = dagman_path.parent
-    #                         with tarfile.open(tar_file, "w:gz") as tar:
-    #                             tar.add(run_dir, arcname=run_dir.name)
-    #
-    #                         # cleanup
-    #                         shutil.rmtree(work_dir)
-    #                         break
+                        process_pegasus_workflow_execution(work_dir, tar_file_to_generate)
 
 
 if __name__ == "__main__":
