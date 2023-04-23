@@ -518,18 +518,11 @@ def run_pegasus_workflow(work_dir, cpu_benchmark_dir):
     proc.wait()
 
 
-def process_pegasus_workflow_execution(work_dir, trial, config):
-    workflow_name = config["workflow"]
-    num_tasks = config["desired_num_tasks"]
-    cpu_work = config["cpu_work"]
-    cpu_fraction = config["cpu_fraction"]
-    data_footprint = config["data_footprint"]
-    architecture = config["architecture"]
-    num_compute_nodes = config["num_compute_nodes"]
+def process_pegasus_workflow_execution(work_dir, workflow_name, desired_num_tasks,
+                                       cpu_work, cpu_fraction, data_footprint, architecture,
+                                       num_compute_nodes, output_dir, trial):
 
-    output_dir = pathlib.Path(config["output_dir"])
-
-    tar_file = output_dir.joinpath(f"{workflow_name}-{num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-"
+    tar_file = output_dir.joinpath(f"{workflow_name}-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-"
                                    f"{architecture}-{num_compute_nodes}-{trial}.tar.gz")
 
     for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
@@ -578,11 +571,15 @@ def main():
                         create_pegasus_workflow(work_dir, benchmark_path)
 
                         # Run the Pegasus workflow
-                        run_pegasus_workflow(workflow, "/home/cc")
+                        run_pegasus_workflow(work_dir, "/home/cc")
 
                         # Process result
-                        process_pegasus_workflow_execution(work_dir, trial, config)
-                        
+                        process_pegasus_workflow_execution(work_dir, config["workflow"],
+                                                           desired_num_tasks,
+                                                           cpu_work, cpu_fraction, data_footprint,
+                                                           config["architecture"], config["num_compute_nodes"],
+                                                           pathlib.Path(config["output_dir"]), trial)
+
 
 
 
