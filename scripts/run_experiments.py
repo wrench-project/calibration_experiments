@@ -250,24 +250,26 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             files.append({
                 "link": "input",
                 "name": "chain_" + str(task_index).zfill(8) + "_input.txt",
-                "size": math.ceil(1000 * data_footprint / desired_num_tasks)  # KB
+                "size": file_size_in_kb
             })
         else:
             files.append({
                 "link": "input",
                 "name": "chain_" + str(task_index - 1).zfill(8) + "_output.txt",
-                "size": math.ceil(1000 * data_footprint / desired_num_tasks)  # KB
+                "size": file_size_in_kb
             })
 
         files.append({
             "link": "output",
             "name": "chain_" + str(task_index).zfill(8) + "_output.txt",
-            "size": math.ceil(1000 * data_footprint / desired_num_tasks)  # KB
+            "size": file_size_in_kb
         })
 
         return files
 
     # create workflow
+    file_size_in_kb = math.ceil((data_footprint / (desired_num_tasks + 1)) / 1000.0)
+
     workflow_json = {
         "name": "Chain-Benchmark",
         "description": "Instance generated with WfCommons - https://wfcommons.org",
@@ -312,6 +314,12 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
     file_name = f"chain-benchmark-{desired_num_tasks}.json"
     with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
         f.write(json.dumps(workflow_json, indent=4))
+
+    # Create input dir and file
+    input_dir = work_dir.joinpath("data")
+    input_dir.mkdir()
+    with open(input_dir.joinpath("chain_00000001_input.txt"), 'wb') as fout:
+        fout.write(os.urandom(file_size_in_kb * 1000))
 
     return pathlib.Path(str(work_dir.absolute()) + "/" + file_name)
 
@@ -380,32 +388,34 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         if task_index == 1:
             files.append({
                 "link": "input",
-                "name": "fork_join_" + str(task_index).zfill(8) + "_input.txt",
-                "size": math.ceil(data_footprint / desired_num_tasks)
+                "name": "forkjoin_" + str(task_index).zfill(8) + "_input.txt",
+                "size": file_size_in_kb
             })
         elif task_index in range(2, desired_num_tasks):
             files.append({
                 "link": "input",
-                "name": "fork_join_" + str(1).zfill(8) + "_output.txt",
-                "size": math.ceil(data_footprint / desired_num_tasks)
+                "name": "forkjoin_" + str(1).zfill(8) + "_output.txt",
+                "size": file_size_in_kb
             })
         elif task_index == desired_num_tasks:
             for j in range(2, desired_num_tasks):
                 files.append({
                     "link": "input",
-                    "name": "fork_join_" + str(j).zfill(8) + "_output.txt",
-                    "size": math.ceil(data_footprint / desired_num_tasks)
+                    "name": "forkjoin_" + str(j).zfill(8) + "_output.txt",
+                    "size": file_size_in_kb
                 })
 
         files.append({
             "link": "output",
-            "name": "fork_join_" + str(task_index).zfill(8) + "_output.txt",
-            "size": math.ceil(data_footprint / desired_num_tasks)
+            "name": "forkjoin_" + str(task_index).zfill(8) + "_output.txt",
+            "size": file_size_in_kb
         })
 
         return files
 
     # create workflow
+    file_size_in_kb = math.ceil((data_footprint / (desired_num_tasks + 1)) / 1000.0)
+
     workflow_json = {
         "name": "Fork-Join-Benchmark",
         "description": "Instance generated with WfCommons - https://wfcommons.org",
@@ -447,11 +457,17 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         # add task to workflow
         workflow_json["workflow"]["tasks"].append(task)
 
-        file_name = f"forkjoin-benchmark-{desired_num_tasks}.json"
-        with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
-            f.write(json.dumps(workflow_json, indent=4))
+    # Create input dir and file
+    input_dir = work_dir.joinpath("data")
+    input_dir.mkdir()
+    with open(input_dir.joinpath("forkjoin_00000001_input.txt"), 'wb') as fout:
+        fout.write(os.urandom(file_size_in_kb * 1000))
 
-        return pathlib.Path(str(work_dir.absolute()) + "/" + file_name)
+    file_name = f"forkjoin-benchmark-{desired_num_tasks}.json"
+    with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
+        f.write(json.dumps(workflow_json, indent=4))
+
+    return pathlib.Path(str(work_dir.absolute()) + "/" + file_name)
 
 
 def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint):
@@ -479,6 +495,7 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
             except (FileNotFoundError, OSError) as e:
                 sys.stderr.write(f"Could not find folder to create lock files: {lock_files_folder.resolve()}\n"
                                  f"You will need to create them manually: 'cores.txt.lock' and 'cores.txt'\n")
+
         if workflow == "chain":
             benchmark_path = create_chain_workflow(desired_num_tasks=desired_num_tasks,
                                                    cpu_fraction=cpu_fraction,
@@ -553,7 +570,6 @@ def main():
             print(str(desired_size) + "\t\t" + str(config["workflow_size"][desired_size]))
         sys.exit(0)
 
-    workflow = config["workflow"]
     for desired_num_tasks in sorted(config["workflow_size"].keys()):
         for cpu_fraction in config["cpu_fraction"]:
             for cpu_work in config["cpu_work"]:
@@ -564,7 +580,7 @@ def main():
                         work_dir = create_work_dir("/tmp/wfbench-workflow")
 
                         # Create the benchmark workflow
-                        benchmark_path = create_benchmark(work_dir, workflow, desired_num_tasks,
+                        benchmark_path = create_benchmark(work_dir, config["workflow"], desired_num_tasks,
                                                           cpu_fraction, cpu_work, data_footprint)
 
                         # Create Pegasus workflow
