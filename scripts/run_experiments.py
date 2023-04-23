@@ -475,6 +475,8 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
     lock_files_folder = pathlib.Path("/var/lib/condor/execute")
     os.system(f"sudo chmod 777 {lock_files_folder}")
 
+    print("WORK DIR = " + str(work_dir.absolute()))
+
     if workflow_recipe_map[workflow]:
         # create benchmark
         benchmark = WorkflowBenchmark(recipe=workflow_recipe_map[workflow], num_tasks=desired_num_tasks)
@@ -577,7 +579,6 @@ def main():
                             f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" +
                             config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}.tar.gz")
 
-                        print("CHECKING IF IS FILE: " + str(tar_file_to_generate))
                         if tar_file_to_generate.is_file():
                             sys.stderr.write("File " + str(tar_file_to_generate) + ": file already exists. [SKIPPING]\n")
                             continue
@@ -597,6 +598,9 @@ def main():
 
                         # Process result
                         process_pegasus_workflow_execution(work_dir, tar_file_to_generate)
+
+                        # Remove working directory
+                        shutil.rmtree(str(work_dir.absolute()), ignore_errors=True)
 
 
 if __name__ == "__main__":
