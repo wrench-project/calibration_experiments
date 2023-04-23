@@ -309,11 +309,11 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
         # add task to workflow
         workflow_json["workflow"]["tasks"].append(task)
 
-    file_name = f"chain-benchmark-{desired_num_tasks}"
+    file_name = f"chain-benchmark-{desired_num_tasks}.json"
     with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
         f.write(json.dumps(workflow_json, indent=4))
 
-    return pathlib.Path(str(work_dir.absolute()) + "/" + filename)
+    return pathlib.Path(str(work_dir.absolute()) + "/" + file_name)
 
 
 def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footprint, lock_files_folder, work_dir):
@@ -447,11 +447,11 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         # add task to workflow
         workflow_json["workflow"]["tasks"].append(task)
 
-        file_name = f"forkjoin-benchmark-{desired_num_tasks}"
+        file_name = f"forkjoin-benchmark-{desired_num_tasks}.json"
         with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
             f.write(json.dumps(workflow_json, indent=4))
 
-        return pathlib.Path(str(work_dir.absolute()) + "/" + filename)
+        return pathlib.Path(str(work_dir.absolute()) + "/" + file_name)
 
 
 def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint):
@@ -510,7 +510,32 @@ def create_work_dir(path):
 
 def create_pegasus_workflow(work_dir, json_file_path):
     translator = PegasusTranslator(json_file_path)
-    translator.translate(json_file_path)
+    translator.translate(work_dir.joinpath("pegasus-workflow.py"))
+
+
+def run_pegasus_workflow(work_dir, cpu_benchmark_dir):
+    proc = subprocess.Popen(["bash", "run-workflow.sh", str(work_dir.absolute()), cpu_benchmark_dir])
+    proc.wait()
+
+
+def process_pegasus_workflow_execution(work_dir, trial, config):
+    workflow_name = config["workflow"]
+    num_tasks = config["desired_num_tasks"]
+    cpu_work = config["cpu_work"]
+    cpu_fraction = config["cpu_fraction"]
+    data_footprint = config["data_footprint"]
+    architecture = config["architecture"]
+    num_compute_nodes = config["num_compute_nodes"]
+
+    output_dir = pathlib.Path(config["output_dir"])
+
+    tar_file = output_dir.joinpath(f"{workflow_name}-{num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-"
+                                   f"{architecture}-{num_compute_nodes}-{trial}.tar.gz")
+
+    for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
+        run_dir = dagman_path.parent
+        with tarfile.open(tar_file, "w:gz") as tar:
+            tar.add(run_dir, arcname=run_dir.name)
 
 
 def main():
@@ -540,15 +565,24 @@ def main():
         for cpu_fraction in config["cpu_fraction"]:
             for cpu_work in config["cpu_work"]:
                 for data_footprint in config["data_footprint"]:
+                    for trial in range(0, config["num_trials"]):
 
-                    # Create a fresh working directory
-                    work_dir = create_work_dir("/tmp/wfbench-workflow")
+                        # Create a fresh working directory
+                        work_dir = create_work_dir("/tmp/wfbench-workflow")
 
-                    # Create the benchmark workflow
-                    benchmark_path = create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint)
+                        # Create the benchmark workflow
+                        benchmark_path = create_benchmark(work_dir, workflow, desired_num_tasks,
+                                                          cpu_fraction, cpu_work, data_footprint)
 
-                    # Create Pegasus workflow
-                    create_pegasus_workflow(work_dir, benchmark_path)
+                        # Create Pegasus workflow
+                        create_pegasus_workflow(work_dir, benchmark_path)
+
+                        # Run the Pegasus workflow
+                        run_pegasus_workflow(workflow, "/home/cc")
+
+                        # Process result
+                        process_pegasus_workflow_execution(work_dir, trial, config)
+                        
 
 
 

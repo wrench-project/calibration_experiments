@@ -1,10 +1,15 @@
 #!/bin/bash
 
+if [[ $# -ne 2 ]] ; then
+    echo "Usage: $0 <work dir path> <cpu-benchmark dir>"
+    exit 1
+fi
+
 # reorganize work dir
-cd wfbench-workflow
+cd "$1" || exit
 mkdir data
 mv *.txt data
-cp ../cpu-benchmark .
+cp "$2"/cpu-benchmark .
 
 # generate pegasus YAML workflow
 export PYTHONPATH=$PYTHONPATH:/usr/lib/python3.6/dist-packages
