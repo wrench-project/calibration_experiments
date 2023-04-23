@@ -299,7 +299,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
-                "program": os.path.expanduser('~') + "/wfcommons/wfcommons/wfbench/wfbench.py",
+                "program": str(pathlib.Path.home()) + "/wfcommons/wfcommons/wfbench/wfbench.py",
                 "arguments": get_arguments(i)
             },
             "parents": get_parents(i),
@@ -448,7 +448,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
-                "program": os.path.expanduser('~') + "/wfcommons/wfcommons/wfbench/wfbench.py",
+                "program": str(pathlib.Path.home()) + "/wfcommons/wfcommons/wfbench/wfbench.py",
                 "arguments": get_arguments(i)
             },
             "parents": get_parents(i),
@@ -585,7 +585,7 @@ def main():
                             continue
 
                         # Create a fresh working directory
-                        work_dir = create_work_dir(os.path.expanduser('~')+"/wfbench-workflow")
+                        work_dir = create_work_dir(str(pathlib.Path.home())+"/wfbench-workflow")
 
                         # Create the benchmark workflow
                         benchmark_path = create_benchmark(work_dir, config["workflow"], desired_num_tasks,
@@ -595,7 +595,7 @@ def main():
                         create_pegasus_workflow(work_dir, benchmark_path)
 
                         # Run the Pegasus workflow
-                        run_pegasus_workflow(work_dir, os.path.expanduser('~'))
+                        run_pegasus_workflow(work_dir, str(pathlib.Path.home()))
 
                         # Process result
                         process_pegasus_workflow_execution(work_dir, tar_file_to_generate)
