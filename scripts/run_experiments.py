@@ -339,21 +339,21 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
     # method to get task arguments
     def get_arguments(task_index):
         arguments = [
-            "fork_join_" + str(task_index).zfill(8),
+            "forkjoin_" + str(task_index).zfill(8),
             "--percent-cpu " + str(cpu_fraction),
             "--cpu-work " + str(cpu_work),
             "--path-lock " + str(lock_files_folder) + "/cores.txt.lock",
             "--path-cores " + str(lock_files_folder) + "/cores.txt",
-            "--out {'fork_join_" + str(task_index).zfill(8) + "_output.txt': " + str(
+            "--out {'forkjoin_" + str(task_index).zfill(8) + "_output.txt': " + str(
                 math.ceil(data_footprint / desired_num_tasks)) + "}"
         ]
         if task_index == 1:
-            arguments.append("fork_join_" + str(task_index).zfill(8) + "_input.txt")
+            arguments.append("forkjoin_" + str(task_index).zfill(8) + "_input.txt")
         elif task_index in range(2, desired_num_tasks):
-            arguments.append("fork_join_" + str(1).zfill(8) + "_output.txt")
+            arguments.append("forkjoin_" + str(1).zfill(8) + "_output.txt")
         elif task_index == desired_num_tasks:
             for j in range(2, desired_num_tasks):
-                arguments.append("fork_join_" + str(j).zfill(8) + "_output.txt")
+                arguments.append("forkjoin_" + str(j).zfill(8) + "_output.txt")
 
         return arguments
 
@@ -363,9 +363,9 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
 
         if task_index == desired_num_tasks:
             for j in range(2, desired_num_tasks):
-                parents.append("fork_join_" + str(j).zfill(8))
+                parents.append("forkjoin_" + str(j).zfill(8))
         elif task_index in range(2, desired_num_tasks):
-            parents.append("fork_join_" + str(1).zfill(8))
+            parents.append("forkjoin_" + str(1).zfill(8))
 
         return parents
 
@@ -375,9 +375,9 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
 
         if task_index == 1:
             for j in range(2, desired_num_tasks):
-                children.append("fork_join_" + str(j).zfill(8))
+                children.append("forkjoin_" + str(j).zfill(8))
         elif task_index in range(2, desired_num_tasks):
-            children.append("fork_join_" + str(desired_num_tasks).zfill(8))
+            children.append("forkjoin_" + str(desired_num_tasks).zfill(8))
 
         return children
 
@@ -444,7 +444,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
     for i in range(1, desired_num_tasks + 1):
         # create task
         task = {
-            "name": "fork_join_" + str(i).zfill(8),
+            "name": "forkjoin_" + str(i).zfill(8),
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
