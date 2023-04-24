@@ -538,13 +538,23 @@ def run_pegasus_workflow(work_dir, cpu_benchmark_dir):
     proc.wait()
 
 
-def process_pegasus_workflow_execution(work_dir, output_dir, tar_file_to_generate_prefix):
+def process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar_file_to_generate_prefix):
 
+    run_dir = None
     for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
         run_dir = dagman_path.parent
-        renamed_dir = run_dir.replace(work_dir.joinpath(tar_file_to_generate_prefix))
-        with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz")), "w:gz") as tar:
-            tar.add(renamed_dir, arcname=run_dir.name)
+        break
+
+    if not run_dir:
+        raise Exception("process_pegasus_workflow_execution(): Couldn't find run dir")
+
+    renamed_dir = run_dir.rename(run_dir.parent.joinpath(tar_file_to_generate_prefix))
+
+    # Putting benchmark workflow in there, just for kicks
+    shutil.copy(str(benchmark_path.absolute()), str(renamed_dir.absolute()))
+
+    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz")), "w:gz") as tar:
+        tar.add(renamed_dir, arcname=renamed_dir.name)
 
 
 def main():
@@ -582,6 +592,8 @@ def main():
                         if output_dir.joinpath(tar_file_to_generate_prefix+".tgz").is_file():
                             sys.stderr.write(f"File {tar_file_to_generate_prefix}: file already exists. [SKIPPING]\n")
                             continue
+                        else:
+                            sys.stderr.write(f"GENERATING FILE {tar_file_to_generate_prefix}.tar.gz...\n")
 
                         # Create a fresh working directory
                         work_dir = create_work_dir(str(pathlib.Path.home())+"/wfbench-workflow")
@@ -597,7 +609,7 @@ def main():
                         run_pegasus_workflow(work_dir, str(pathlib.Path.home()))
 
                         # Process result
-                        process_pegasus_workflow_execution(work_dir, output_dir, tar_file_to_generate_prefix)
+                        process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar_file_to_generate_prefix)
 
                         # Remove working directory
                         shutil.rmtree(str(work_dir.absolute()), ignore_errors=True)
