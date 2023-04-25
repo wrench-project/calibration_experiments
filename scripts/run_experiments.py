@@ -589,11 +589,11 @@ def main():
                         tar_file_to_generate_prefix = config["workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
                                                       config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}"
 
-                        if output_dir.joinpath(tar_file_to_generate_prefix+".tgz").is_file():
+                        if output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz").is_file():
                             sys.stderr.write(f"File {tar_file_to_generate_prefix}: file already exists. [SKIPPING]\n")
                             continue
                         else:
-                            sys.stderr.write(f"GENERATING FILE {tar_file_to_generate_prefix}.tar.gz...\n")
+                            sys.stderr.write(f"RUNNING WORKFLOW {tar_file_to_generate_prefix}...\n")
 
                         # Create a fresh working directory
                         work_dir = create_work_dir(str(pathlib.Path.home())+"/wfbench-workflow")
