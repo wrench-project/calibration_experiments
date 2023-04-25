@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-import json
 import subprocess
 import tarfile
 import os
+import time
 import sys
 import shutil
 from datetime import datetime
@@ -250,25 +250,26 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             files.append({
                 "link": "input",
                 "name": "chain_" + str(task_index).zfill(8) + "_input.txt",
-                "size": file_size_in_kb
+                "size": file_size_in_kilobytes
             })
         else:
             files.append({
                 "link": "input",
                 "name": "chain_" + str(task_index - 1).zfill(8) + "_output.txt",
-                "size": file_size_in_kb
+                "size": file_size_in_kilobytes
             })
 
         files.append({
             "link": "output",
             "name": "chain_" + str(task_index).zfill(8) + "_output.txt",
-            "size": file_size_in_kb
+            "size": file_size_in_kilobytes
         })
 
         return files
 
     # create workflow
-    file_size_in_kb = math.ceil((data_footprint / (desired_num_tasks + 1)) / 1000.0)
+    file_size_in_bytes = math.ceil(data_footprint / (desired_num_tasks + 1))
+    file_size_in_kilobytes = math.ceil(file_size_in_bytes / 1000)
 
     workflow_json = {
         "name": "Chain-Benchmark",
@@ -319,7 +320,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
     input_dir = work_dir.joinpath("data")
     input_dir.mkdir()
     with open(input_dir.joinpath("chain_00000001_input.txt"), 'wb') as fout:
-        fout.write(os.urandom(file_size_in_kb * 1000))
+        fout.write(os.urandom(file_size_in_bytes))
 
     return pathlib.Path(str(work_dir.absolute()) + "/" + file_name)
 
@@ -389,26 +390,26 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
             files.append({
                 "link": "input",
                 "name": "forkjoin_" + str(task_index).zfill(8) + "_input.txt",
-                "size": file_size_in_kb
+                "size": file_size_in_kilobytes
             })
         elif task_index in range(2, desired_num_tasks):
             files.append({
                 "link": "input",
                 "name": "forkjoin_" + str(1).zfill(8) + "_output.txt",
-                "size": file_size_in_kb
+                "size": file_size_in_kilobytes
             })
         elif task_index == desired_num_tasks:
             for j in range(2, desired_num_tasks):
                 files.append({
                     "link": "input",
                     "name": "forkjoin_" + str(j).zfill(8) + "_output.txt",
-                    "size": file_size_in_kb
+                    "size": file_size_in_kilobytes
                 })
 
         files.append({
             "link": "output",
             "name": "forkjoin_" + str(task_index).zfill(8) + "_output.txt",
-            "size": file_size_in_kb
+            "size": file_size_in_kilobytes
         })
 
         return files
@@ -417,7 +418,8 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
     if desired_num_tasks < 4:
         raise Exception("Cannot create a forkjoin benchmark with fewer than 4 tasks")
 
-    file_size_in_kb = math.ceil((data_footprint / (desired_num_tasks + 1)) / 1000.0)
+    file_size_in_bytes = math.ceil(data_footprint / (desired_num_tasks + 1))
+    file_size_in_kilobytes = math.ceil(file_size_in_bytes / 1000)
 
     workflow_json = {
         "name": "Forkjoin-Benchmark",
@@ -464,7 +466,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
     input_dir = work_dir.joinpath("data")
     input_dir.mkdir()
     with open(input_dir.joinpath("forkjoin_00000001_input.txt"), 'wb') as fout:
-        fout.write(os.urandom(file_size_in_kb * 1000))
+        fout.write(os.urandom(file_size_in_bytes))
 
     file_name = f"forkjoin-benchmark-{desired_num_tasks}.json"
     with open(str(work_dir.absolute()) + "/" + file_name, 'w') as f:
@@ -586,8 +588,9 @@ def main():
                     for trial in range(0, config["num_trials"]):
 
                         output_dir = pathlib.Path(config["output_dir"])
+                        timestamp = int(time.time())
                         tar_file_to_generate_prefix = config["workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
-                                                      config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}"
+                                                      config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{timestamp}"
 
                         if output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz").is_file():
                             sys.stderr.write(f"File {tar_file_to_generate_prefix}: file already exists. [SKIPPING]\n")
