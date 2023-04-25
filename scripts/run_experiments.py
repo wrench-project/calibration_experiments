@@ -557,22 +557,16 @@ def process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar
     # Putting benchmark workflow .json in there, just for kicks
     shutil.copy(str(benchmark_path.absolute()), str(renamed_dir.absolute()))
 
-    # Create the workflow .json in there as well
-    # def convert(target_dir: str,
-    #             workflow_name: str,
-    #             output: str,
-    #             ignore_auxiliary: bool,
-    #             recursive: bool
-    #             ):
+    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz")), "w:gz") as tar:
+        tar.add(renamed_dir, arcname=renamed_dir.name)
+
+    # Generate observed workflow
     parser = PegasusLogsParser(submit_dir=renamed_dir, ignore_auxiliary=False)
     # generating the workflow instance object
     workflow = parser.build_workflow(tar_file_to_generate_prefix + ".json")
     # writing the workflow instance to a JSON file
-    workflow_path = renamed_dir.joinpath(tar_file_to_generate_prefix + ".json")
+    workflow_path = output_dir.joinpath(tar_file_to_generate_prefix + ".json")
     workflow.write_json(workflow_path)
-
-    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz")), "w:gz") as tar:
-        tar.add(renamed_dir, arcname=renamed_dir.name)
 
 
 def main():
