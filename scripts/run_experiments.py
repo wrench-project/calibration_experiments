@@ -218,7 +218,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             "--path-lock " + str(lock_files_folder) + "/cores.txt.lock",
             "--path-cores " + str(lock_files_folder) + "/cores.txt",
             "--out {'chain_" + str(task_index).zfill(8) + "_output.txt': " +
-            str(math.ceil(data_footprint / desired_num_tasks)) + "}"
+            str(file_size_in_bytes) + "}"
         ]
 
         if task_index == 1:
@@ -346,7 +346,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
             "--path-lock " + str(lock_files_folder) + "/cores.txt.lock",
             "--path-cores " + str(lock_files_folder) + "/cores.txt",
             "--out {'forkjoin_" + str(task_index).zfill(8) + "_output.txt': " + str(
-                math.ceil(data_footprint / desired_num_tasks)) + "}"
+                str(file_size_in_bytes)) + "}"
         ]
         if task_index == 1:
             arguments.append("forkjoin_" + str(task_index).zfill(8) + "_input.txt")
