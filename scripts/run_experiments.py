@@ -185,8 +185,7 @@ def get_min_workflow_size(workflow):
                                               cpu_work=0,
                                               data=0,
                                               percent_cpu=1.0)
-            with open(path, 'r') as f:
-                return s
+            return s
         except Exception:
             pass
 
@@ -251,32 +250,31 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             files.append({
                 "link": "input",
                 "name": "chain_" + str(task_index).zfill(8) + "_input.txt",
-                "size": file_size_in_kilobytes
+                "sizeInBytes": file_size_in_bytes
             })
         else:
             files.append({
                 "link": "input",
                 "name": "chain_" + str(task_index - 1).zfill(8) + "_output.txt",
-                "size": file_size_in_kilobytes
+                "sizeInBytes": file_size_in_bytes
             })
 
         files.append({
             "link": "output",
             "name": "chain_" + str(task_index).zfill(8) + "_output.txt",
-            "size": file_size_in_kilobytes
+            "sizeInBytes": file_size_in_bytes
         })
 
         return files
 
     # create workflow
     file_size_in_bytes = math.ceil(data_footprint / (desired_num_tasks + 1))
-    file_size_in_kilobytes = math.ceil(file_size_in_bytes / 1000)
 
     workflow_json = {
         "name": "Chain-Benchmark",
         "description": "Instance generated with WfCommons - https://wfcommons.org",
         "createdAt": str(datetime.utcnow().isoformat()),
-        "schemaVersion": "1.3",
+        "schemaVersion": "1.4",
         "author": {
             "name": str(getpass.getuser()),
             "email": "support@wfcommons.org"
@@ -391,26 +389,26 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
             files.append({
                 "link": "input",
                 "name": "forkjoin_" + str(task_index).zfill(8) + "_input.txt",
-                "size": file_size_in_kilobytes
+                "sizeInBytes": file_size_in_bytes
             })
         elif task_index in range(2, desired_num_tasks):
             files.append({
                 "link": "input",
                 "name": "forkjoin_" + str(1).zfill(8) + "_output.txt",
-                "size": file_size_in_kilobytes
+                "sizeInBytes": file_size_in_bytes
             })
         elif task_index == desired_num_tasks:
             for j in range(2, desired_num_tasks):
                 files.append({
                     "link": "input",
                     "name": "forkjoin_" + str(j).zfill(8) + "_output.txt",
-                    "size": file_size_in_kilobytes
+                    "sizeInBytes": file_size_in_bytes
                 })
 
         files.append({
             "link": "output",
             "name": "forkjoin_" + str(task_index).zfill(8) + "_output.txt",
-            "size": file_size_in_kilobytes
+            "sizeInBytes": file_size_in_bytes
         })
 
         return files
@@ -420,7 +418,6 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         raise Exception("Cannot create a forkjoin benchmark with fewer than 4 tasks")
 
     file_size_in_bytes = math.ceil(data_footprint / (desired_num_tasks + 1))
-    file_size_in_kilobytes = math.ceil(file_size_in_bytes / 1000)
 
     workflow_json = {
         "name": "Forkjoin-Benchmark",
