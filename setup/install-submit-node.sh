@@ -56,8 +56,10 @@ pip install -e .
 #g++ -o cpu-benchmark cpu-benchmark.cpp
 cp bin/cpu-benchmark /home/cc
 
-# configure environment
+# Put relevant scripts in $HOME
 cd /home/cc
-cp calibration_experiments/scripts/run-workflow.sh .
-cp calibration_experiments/scripts/run_experiments.py .
-chown cc:cc run-workflow.sh run_experiments.py
+scripts="run-workflow.sh run_experiments.py run_all_experiments.sh"
+for script in $scripts; do
+	cp calibration_experiments/scripts/$script .
+	chown cc:cc $script
+done

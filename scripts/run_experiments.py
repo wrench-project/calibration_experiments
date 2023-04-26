@@ -286,7 +286,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
         },
         "workflow": {
             "executedAt": str(datetime.now().astimezone().strftime("%Y%m%dT%H%M%S%z")),
-            "makespan": 0,
+            "makespanInSeconds": 0,
             "tasks": []
         }
     }
@@ -435,7 +435,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
         },
         "workflow": {
             "executedAt": str(datetime.now().astimezone().strftime("%Y%m%dT%H%M%S%z")),
-            "makespan": 0,
+            "makespanInSeconds": 0,
             "tasks": []
         }
     }
