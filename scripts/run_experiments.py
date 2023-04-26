@@ -20,7 +20,6 @@ from wfcommons.wfbench import WorkflowBenchmark
 from wfcommons.wfbench.translator import PegasusTranslator
 from wfcommons.wfinstances import PegasusLogsParser
 
-
 architectures = ["haswell", "skylake", "cascadelake"]
 workflow_recipe_map = {"seismology": SeismologyRecipe,
                        "montage": MontageRecipe,
@@ -210,7 +209,6 @@ def compute_workflow_sizes(workflow, size_factors):
 
 
 def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footprint, lock_files_folder, work_dir):
-
     def get_arguments(task_index):
         arguments = [
             "chain_" + str(i).zfill(8),
@@ -475,7 +473,6 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
 
 
 def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint):
-
     lock_files_folder = pathlib.Path("/var/lib/condor/execute")
     os.system(f"sudo chmod 777 {lock_files_folder}")
 
@@ -540,7 +537,6 @@ def run_pegasus_workflow(work_dir, cpu_benchmark_dir):
 
 
 def process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar_file_to_generate_prefix):
-
     run_dir = None
     for dagman_path in work_dir.joinpath("work/cc/pegasus").glob("**/*.dag.dagman.out"):
         run_dir = dagman_path.parent
@@ -557,15 +553,16 @@ def process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar
 
     timestamp = int(time.time())
 
-    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+"-"+str(timestamp)+".tar.gz")), "w:gz") as tar:
+    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix + "-" + str(timestamp) + ".tar.gz")),
+                      "w:gz") as tar:
         tar.add(renamed_dir, arcname=renamed_dir.name)
 
     # Generate observed workflow
     parser = PegasusLogsParser(submit_dir=renamed_dir, ignore_auxiliary=False)
     # generating the workflow instance object
-    workflow = parser.build_workflow(tar_file_to_generate_prefix + ".json")
+    workflow = parser.build_workflow(tar_file_to_generate_prefix + "-" + str(timestamp) + ".json")
     # writing the workflow instance to a JSON file
-    workflow_path = output_dir.joinpath(tar_file_to_generate_prefix + ".json")
+    workflow_path = output_dir.joinpath(tar_file_to_generate_prefix + "-" + str(timestamp) + ".json")
     workflow.write_json(workflow_path)
 
 
@@ -598,8 +595,10 @@ def main():
                     for trial in range(0, config["num_trials"]):
 
                         output_dir = pathlib.Path(config["output_dir"])
-                        tar_file_to_generate_prefix = config["workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
-                                                      config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}"
+                        tar_file_to_generate_prefix = config[
+                                                          "workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
+                                                      config["architecture"] + "-" + str(
+                            config["num_compute_nodes"]) + f"-{trial}"
 
                         if glob.glob(str(output_dir.absolute()) + "/" + tar_file_to_generate_prefix + "-*.tar.gz"):
                             sys.stderr.write(f"File {tar_file_to_generate_prefix}: already exists. [SKIPPING]\n")
@@ -608,7 +607,7 @@ def main():
                             sys.stderr.write(f"RUNNING WORKFLOW {tar_file_to_generate_prefix}...\n")
 
                         # Create a fresh working directory
-                        work_dir = create_work_dir(str(pathlib.Path.home())+"/wfbench-workflow")
+                        work_dir = create_work_dir(str(pathlib.Path.home()) + "/wfbench-workflow")
 
                         # Create the benchmark workflow
                         benchmark_path = create_benchmark(work_dir, config["workflow"], desired_num_tasks,
@@ -621,7 +620,8 @@ def main():
                         run_pegasus_workflow(work_dir, str(pathlib.Path.home()))
 
                         # Process result
-                        process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar_file_to_generate_prefix)
+                        process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir,
+                                                           tar_file_to_generate_prefix)
 
                         # Remove working directory
                         shutil.rmtree(str(work_dir.absolute()), ignore_errors=True)
