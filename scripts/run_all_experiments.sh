@@ -1,5 +1,6 @@
 #!/bin/bash 
 
+
 if [[ $# -ne 4 ]] ; then
     echo "Usage: $0 <output dir path> <num compute nodes> <architecture> <num trials>"
     echo " You may want to edit this script to change cpu work, data footprint, and/or workflow size values"
