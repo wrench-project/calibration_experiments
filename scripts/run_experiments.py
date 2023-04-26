@@ -3,6 +3,7 @@
 import subprocess
 import tarfile
 import os
+import glob
 import time
 import sys
 import shutil
@@ -554,7 +555,9 @@ def process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar
     # Putting benchmark workflow .json in there, just for kicks
     shutil.copy(str(benchmark_path.absolute()), str(renamed_dir.absolute()))
 
-    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz")), "w:gz") as tar:
+    timestamp = int(time.time())
+
+    with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix+"-"+str(timestamp)+".tar.gz")), "w:gz") as tar:
         tar.add(renamed_dir, arcname=renamed_dir.name)
 
     # Generate observed workflow
@@ -595,12 +598,11 @@ def main():
                     for trial in range(0, config["num_trials"]):
 
                         output_dir = pathlib.Path(config["output_dir"])
-                        timestamp = int(time.time())
                         tar_file_to_generate_prefix = config["workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
-                                                      config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{timestamp}"
+                                                      config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}"
 
-                        if output_dir.joinpath(tar_file_to_generate_prefix+".tar.gz").is_file():
-                            sys.stderr.write(f"File {tar_file_to_generate_prefix}: file already exists. [SKIPPING]\n")
+                        if glob.glob(str(output_dir.absolute()) + tar_file_to_generate_prefix + "-*.tar.gz"):
+                            sys.stderr.write(f"File {tar_file_to_generate_prefix}: already exists. [SKIPPING]\n")
                             continue
                         else:
                             sys.stderr.write(f"RUNNING WORKFLOW {tar_file_to_generate_prefix}...\n")
