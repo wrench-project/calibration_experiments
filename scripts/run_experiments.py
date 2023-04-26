@@ -601,7 +601,7 @@ def main():
                         tar_file_to_generate_prefix = config["workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
                                                       config["architecture"] + "-" + str(config["num_compute_nodes"]) + f"-{trial}"
 
-                        if glob.glob(str(output_dir.absolute()) + tar_file_to_generate_prefix + "-*.tar.gz"):
+                        if glob.glob(str(output_dir.absolute()) + "/" + tar_file_to_generate_prefix + "-*.tar.gz"):
                             sys.stderr.write(f"File {tar_file_to_generate_prefix}: already exists. [SKIPPING]\n")
                             continue
                         else:
