@@ -545,13 +545,13 @@ def process_pegasus_workflow_execution(work_dir, benchmark_path, output_dir, tar
     if not run_dir:
         raise Exception("process_pegasus_workflow_execution(): Couldn't find run dir")
 
+    timestamp = int(time.time())
+
     # Rename the directory so that it matches the .tar.gz filename
-    renamed_dir = run_dir.rename(run_dir.parent.joinpath(tar_file_to_generate_prefix))
+    renamed_dir = run_dir.rename(run_dir.parent.joinpath(tar_file_to_generate_prefix + "-" + str(timestamp)))
 
     # Putting benchmark workflow .json in there, just for kicks
     shutil.copy(str(benchmark_path.absolute()), str(renamed_dir.absolute()))
-
-    timestamp = int(time.time())
 
     with tarfile.open(str(output_dir.joinpath(tar_file_to_generate_prefix + "-" + str(timestamp) + ".tar.gz")),
                       "w:gz") as tar:
