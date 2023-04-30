@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 
-if [[ $# -ne 3 ]] ; then
+if [[ $# -ne 2 ]] ; then
     echo "Usage: $0 <output dir path> <num trials>"
     echo " You may want to edit this script to change cpu work, data footprint, and/or workflow size values"
     exit 1
@@ -22,10 +22,20 @@ if [[ $(grep -c "Gold 6126 CPU" /proc/cpuinfo) -ne "0" ]] ; then
   ARCHITECTURE="skylake"
 fi
 
-if [[ $ARCHITECTURE -e "" ]] ; then
+if [[ -z $ARCHITECTURE ]] ; then
   echo "Error: Cannot determine architecture. Aborting"
   exit 1
 fi
+
+echo "About to run experiments for architecture $ARCHITECTURE with $NUM_COMPUTE_NODES compute nodes using $NUM_TRIALS"
+read -p "Continue? [Y/n] " -n 1 -r
+echo    # (optional) move to a new line
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+    [[ "$0" = "$BASH_SOURCE" ]] && exit 1
+fi
+
+
 
 # Real workflows
 real_workflows="seismology montage genome soykb cycles epigenomics bwa"
