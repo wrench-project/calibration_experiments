@@ -1,17 +1,31 @@
 #!/bin/bash 
 
 
-if [[ $# -ne 4 ]] ; then
-    echo "Usage: $0 <output dir path> <num compute nodes> <architecture> <num trials>"
+if [[ $# -ne 3 ]] ; then
+    echo "Usage: $0 <output dir path> <num trials>"
     echo " You may want to edit this script to change cpu work, data footprint, and/or workflow size values"
     exit 1
 fi
 
 OUTPUT_DIR=$1
-NUM_COMPUTE_NODES=$2
-ARCHITECTURE=$3
-NUM_TRIALS=$4
+NUM_TRIALS=$2
 
+# Figure out number of compute nodes
+NUM_COMPUTE_NODES=$(condor_status | grep -c slot1@)
+
+ARCHITECTURE=""
+# Figure out architecture
+if [[ $(grep -c "CPU E5-2670 v3" /proc/cpuinfo) -ne "0" ]] ; then
+  ARCHITECTURE="haswell"
+fi
+if [[ $(grep -c "Gold 6126 CPU" /proc/cpuinfo) -ne "0" ]] ; then
+  ARCHITECTURE="skylake"
+fi
+
+if [[ $ARCHITECTURE -e "" ]] ; then
+  echo "Error: Cannot determine architecture. Aborting"
+  exit 1
+fi
 
 # Real workflows
 real_workflows="seismology montage genome soykb cycles epigenomics bwa"
