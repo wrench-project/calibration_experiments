@@ -481,7 +481,7 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
         benchmark = WorkflowBenchmark(recipe=workflow_recipe_map[workflow], num_tasks=desired_num_tasks)
         benchmark_path = benchmark.create_benchmark(save_dir=work_dir,
                                                     cpu_work=cpu_work,
-                                                    data=data_footprint,
+                                                    data=data_footprint / (1000.0 * 1000.0),
                                                     percent_cpu=cpu_fraction,
                                                     lock_files_folder=lock_files_folder)
     else:
@@ -593,7 +593,7 @@ def main():
             for cpu_fraction in config["cpu_fraction"]:
                 for data_footprint in config["data_footprint"]:
                     for trial in range(0, config["num_trials"]):
-
+                        # print(f"{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-{trial}")
                         output_dir = pathlib.Path(config["output_dir"])
                         tar_file_to_generate_prefix = config[
                                                           "workflow"] + f"-{desired_num_tasks}-{cpu_work}-{cpu_fraction}-{data_footprint}-" + \
