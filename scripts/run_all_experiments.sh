@@ -27,7 +27,7 @@ if [[ -z $ARCHITECTURE ]] ; then
   exit 1
 fi
 
-echo "About to run experiments for architecture $ARCHITECTURE with $NUM_COMPUTE_NODES compute nodes using $NUM_TRIALS"
+echo "About to run experiments for architecture $ARCHITECTURE with $NUM_COMPUTE_NODES compute nodes using $NUM_TRIALS trials..."
 read -p "Continue? [Y/n] " -n 1 -r
 echo    # (optional) move to a new line
 if [[ ! $REPLY =~ ^[Yy]$ ]]
