@@ -10,11 +10,17 @@ echo "This IPs below are hardcoded into the script:"
 for IP in $IPs; do
 	NUMFILEFOUND=$(ssh cc@$IP ls 'tracing_output/*.json' | wc -l)
 	FILEFOUND=$(ssh cc@$IP ls 'tracing_output/*.json' | head -1)
+	ACTIVE=$(ssh cc@129.114.108.220 ps auxww | grep run_all_ex | wc -l)
 	ARCHITECTURE=$(echo $FILEFOUND | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
 	NUM_COMPUTE_NODES=$(echo $FILEFOUND | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
-	#echo "  - $IP: $ARCHITECTURE, $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND result files)"
+	ACTIVE_STRING=""
+	if [ "$ACTIVE" -eq "1" ]; then
+	  ACTIVE_STRING="RUNNING"
+	else
+	  ACTIVE_STRING="NOT RUNNING"
+	fi
 	printf '  - %-*s' 16 "$IP:"
-	echo " $ARCHITECTURE, $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND result files)"
+	echo " $ARCHITECTURE, $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND result files, *$ACTIVE_STRING*)"
 	DIRNAME="./$ARCHITECTURE-$NUM_COMPUTE_NODES-compute-nodes"
 	IP_DIR_MAP["$IP"]="$DIRNAME"
 	if [ ! -d "$DIRNAME" ]; then
