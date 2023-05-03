@@ -2,7 +2,7 @@
 set -e
 
 
-IPs="129.114.108.220 129.114.109.104 129.114.109.38 129.114.109.189 129.114.108.237"
+IPs="129.114.108.220 129.114.109.104 129.114.109.38 129.114.109.189 129.114.108.237 129.114.109.41 129.114.109.111"
 
 declare -A IP_DIR_MAP
 
@@ -19,8 +19,9 @@ for IP in $IPs; do
 	else
 	  ACTIVE_STRING="NOT RUNNING"
 	fi
-	printf '  - %-*s' 16 "$IP:"
-	echo " $ARCHITECTURE, $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND result files, *$ACTIVE_STRING*)"
+	printf '  - %-*s' 19 "$IP: "
+	printf '%-*s' 11 "$ARCHITECTURE"
+	echo "  $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND result files, *$ACTIVE_STRING*)"
 	DIRNAME="./$ARCHITECTURE-$NUM_COMPUTE_NODES-compute-nodes"
 	IP_DIR_MAP["$IP"]="$DIRNAME"
 	if [ ! -d "$DIRNAME" ]; then
@@ -141,15 +142,5 @@ for IP in $SELECTED_IPs; do
       ;;
   esac
 done
-
-
-
-
-
-
-
-
-
-
 
 
