@@ -2,11 +2,11 @@
 set -e
 
 
-IPs="129.114.108.220 129.114.109.104 129.114.109.38 129.114.109.189 129.114.108.237 129.114.109.41 129.114.109.111"
+IPs="129.114.108.220 129.114.109.104 129.114.109.38 129.114.109.82 129.114.109.189 129.114.108.237 129.114.109.41 129.114.109.111"
 
 declare -A IP_DIR_MAP
 
-echo "This IPs below are hardcoded into the script:"
+echo "These IPs below are hardcoded into the script:"
 for IP in $IPs; do
 	NUMFILEFOUND=$(ssh cc@$IP ls 'tracing_output/*.json' | wc -l)
 	FILEFOUND=$(ssh cc@$IP ls 'tracing_output/*.json' | head -1)
