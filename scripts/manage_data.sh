@@ -110,7 +110,7 @@ fi
 
 echo "About to do: ${OPERATION_MAP[$SELECTED_OPERATION]} for the following:"
 for IP in $SELECTED_IPs; do
-  echo "  - $IP (${IP_DIR_MAP[$key]})"
+  echo "  - $IP (${IP_DIR_MAP[IP]})"
 done
 
 echo ""
