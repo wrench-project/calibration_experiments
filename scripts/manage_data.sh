@@ -8,11 +8,11 @@ declare -A IP_DIR_MAP
 
 echo "These IPs below are hardcoded into the script:"
 for IP in $IPs; do
-	NUMFILEFOUND=$(ssh cc@$IP ls 'tracing_output/*.json' | wc -l)
-	FILEFOUND=$(ssh cc@$IP ls 'tracing_output/*.json' | head -1)
+	NUMFILEFOUND=$(ssh cc@"$IP" ls 'tracing_output/*.json' | wc -l)
+	FILEFOUND=$(ssh cc@"$IP" ls 'tracing_output/*.json' | head -1)
 	ACTIVE=$(ssh cc@129.114.108.220 ps auxww | grep run_all_ex | wc -l)
-	ARCHITECTURE=$(echo $FILEFOUND | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
-	NUM_COMPUTE_NODES=$(echo $FILEFOUND | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
+	ARCHITECTURE=$(echo "$FILEFOUND" | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
+	NUM_COMPUTE_NODES=$(echo "$FILEFOUND" | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
 	ACTIVE_STRING=""
 	if [ "$ACTIVE" -eq "1" ]; then
 	  ACTIVE_STRING="RUNNING"
@@ -39,16 +39,16 @@ then
 fi
 
 declare -A OPERATION_MAP
-OPERATION_MAP["1"]="Download all .json's from IPs"
-OPERATION_MAP["2"]="Download all .tar.gz's from IPs"
-OPERATION_MAP["3"]="Download all .json's and .tar.gz's from IPs"
-OPERATION_MAP["4"]="Upload .json to IPs"
+OPERATION_MAP["1"]="Rsync all .json's FROM IPs"
+OPERATION_MAP["2"]="Rsync all .tar.gz's FROM IPs"
+OPERATION_MAP["3"]="Rsync all .json's and .tar.gz's FROM IPs"
+OPERATION_MAP["4"]="Rsync all .json's TO IPs"
 
 NUM_OPS=${#OPERATION_MAP[@]}
 
 echo ""
 echo "Select one of the options below:"
-for OP_INDEX in $(seq 1 $NUM_OPS); do
+for OP_INDEX in $(seq 1 "$NUM_OPS"); do
   echo "  $OP_INDEX. ${OPERATION_MAP[$OP_INDEX]}"
 done
 
@@ -73,7 +73,7 @@ echo "What IPs do you want to do this for?"
 echo "  1. all below"
 index=2
 for key in "${!IP_DIR_MAP[@]}"; do
-	printf "  $index. "'%-*s' 15 $key
+	printf "  $index. "'%-*s' 15 "$key"
 	echo " (${IP_DIR_MAP[$key]})"
 	((index++))
 done
@@ -125,16 +125,16 @@ fi
 for IP in $SELECTED_IPs; do
   case $SELECTED_OPERATION in
     "1")
-      rsync -vr --exclude '*.tar.gz' cc@$IP:/home/cc/tracing_output/ ./${IP_DIR_MAP[$IP]}/
+      rsync -vr --exclude '*.tar.gz' cc@"$IP":/home/cc/tracing_output/ ./"${IP_DIR_MAP[$IP]}"/
       ;;
     "2")
-      rsync -vr --exclude '*.json' cc@$IP:/home/cc/tracing_output/ ./${IP_DIR_MAP[$IP]}/
+      rsync -vr --exclude '*.json' cc@"$IP":/home/cc/tracing_output/ ./"${IP_DIR_MAP[$IP]}"/
       ;;
     "3")
-      rsync -vr cc@$IP:/home/cc/tracing_output/ ./${IP_DIR_MAP[$IP]}/
+      rsync -vr cc@"$IP":/home/cc/tracing_output/ ./"${IP_DIR_MAP[$IP]}"/
       ;;
     "4")
-      rsync -vr --exclude '*.tar.gz' ./${IP_DIR_MAP[$IP]}/ cc@$IP:/home/cc/tracing_output/
+      rsync -vr --exclude '*.tar.gz' ./"${IP_DIR_MAP[$IP]}"/ cc@"$IP":/home/cc/tracing_output/
       ;;
     *)
       echo "FATAL ERROR: UNKNOWN OPERATION"
