@@ -125,20 +125,19 @@ fi
 for IP in $SELECTED_IPs; do
   case $SELECTED_OPERATION in
     "1")
-      scp cc@$IP:'tracing_output/*.json' ./${IP_DIR_MAP[$key]}/
+      rsync -vr --exclude '*.tar.gz' cc@$IP:/home/cc/tracing_output ./${IP_DIR_MAP[$key]}/
       ;;
     "2")
-      scp cc@$IP:'tracing_output/*.tar.gz' ./${IP_DIR_MAP[$key]}/
+      rsync -vr --exclude '*.json' cc@$IP:/home/cc/tracing_output ./${IP_DIR_MAP[$key]}/
       ;;
     "3")
-      scp cc@$IP:'tracing_output/*.json' ./${IP_DIR_MAP[$key]}/
-      scp cc@$IP:'tracing_output/*.tar.gz' ./${IP_DIR_MAP[$key]}/
+      rsync -vr cc@$IP:/home/cc/tracing_output ./${IP_DIR_MAP[$key]}/
       ;;
     "4")
-      scp ./${IP_DIR_MAP[$key]}/*.json cc@$IP:tracing_output/
+      rsync -vr --exclude '*.tar.gz' ./${IP_DIR_MAP[$key]}/ cc@$IP:/home/cc/tracing_output
       ;;
     *)
-      echo "FATAL ERROR: UKNOWN OPERATION"
+      echo "FATAL ERROR: UNKNOWN OPERATION"
       ;;
   esac
 done
