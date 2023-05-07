@@ -125,16 +125,16 @@ fi
 for IP in $SELECTED_IPs; do
   case $SELECTED_OPERATION in
     "1")
-      rsync -vr --exclude '*.tar.gz' cc@$IP:/home/cc/tracing_output ./${IP_DIR_MAP[$key]}/
+      rsync -vr --exclude '*.tar.gz' cc@$IP:/home/cc/tracing_output/ ./${IP_DIR_MAP[$IP]}/
       ;;
     "2")
-      rsync -vr --exclude '*.json' cc@$IP:/home/cc/tracing_output ./${IP_DIR_MAP[$key]}/
+      rsync -vr --exclude '*.json' cc@$IP:/home/cc/tracing_output/ ./${IP_DIR_MAP[$IP]}/
       ;;
     "3")
-      rsync -vr cc@$IP:/home/cc/tracing_output ./${IP_DIR_MAP[$key]}/
+      rsync -vr cc@$IP:/home/cc/tracing_output/ ./${IP_DIR_MAP[$IP]}/
       ;;
     "4")
-      rsync -vr --exclude '*.tar.gz' ./${IP_DIR_MAP[$key]}/ cc@$IP:/home/cc/tracing_output
+      rsync -vr --exclude '*.tar.gz' ./${IP_DIR_MAP[$IP]}/ cc@$IP:/home/cc/tracing_output/
       ;;
     *)
       echo "FATAL ERROR: UNKNOWN OPERATION"
