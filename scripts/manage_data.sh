@@ -19,10 +19,11 @@ for IP in $IPs; do
 	else
 	  ACTIVE_STRING="NOT RUNNING"
 	fi
+	DIRNAME="./$ARCHITECTURE-$NUM_COMPUTE_NODES-compute-nodes"
+	NUMLOCALFILEFOUND=$(ls "$DIRNAME"/'*.json' 2> /dev/null | wc -l)
 	printf '  - %-*s' 19 "$IP: "
 	printf '%-*s' 11 "$ARCHITECTURE"
-	echo "  $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND result files, *$ACTIVE_STRING*)"
-	DIRNAME="./$ARCHITECTURE-$NUM_COMPUTE_NODES-compute-nodes"
+	echo "  $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND remote files, $NUMLOCALFILEFOUND local files, *$ACTIVE_STRING*)"
 	IP_DIR_MAP["$IP"]="$DIRNAME"
 	if [ ! -d "$DIRNAME" ]; then
   	  mkdir "$DIRNAME"
@@ -42,7 +43,6 @@ declare -A OPERATION_MAP
 OPERATION_MAP["1"]="Rsync all .json's FROM IPs"
 OPERATION_MAP["2"]="Rsync all .tar.gz's FROM IPs"
 OPERATION_MAP["3"]="Rsync all .json's and .tar.gz's FROM IPs"
-OPERATION_MAP["4"]="Rsync all .json's TO IPs"
 
 NUM_OPS=${#OPERATION_MAP[@]}
 
@@ -68,45 +68,7 @@ while true; do
 done
 
 
-echo""
-echo "What IPs do you want to do this for?"
-echo "  1. all below"
-index=2
-for key in "${!IP_DIR_MAP[@]}"; do
-	printf "  $index. "'%-*s' 15 "$key"
-	echo " (${IP_DIR_MAP[$key]})"
-	((index++))
-done
-((index--))
-
-while true; do
-  # Prompt the user for a number between 1 and 4
-  read -p "Choice? " -n 1 -r IP_INDEX
-
-  if [[ "$IP_INDEX" =~ ^[1-"$index"]$ ]]; then
-    # The input is valid, continue with the script
-    echo ""
-    break
-  else
-    # The input is invalid, print an error message and try again
-    echo ""
-    echo "Error: Input must be a number between 1 and $index"
-  fi
-done
-
-if [[ $IP_INDEX -eq "1" ]]; then
-  SELECTED_IPs=$IPs 
-else  
-  index=2
-  for key in "${!IP_DIR_MAP[@]}"; do
-    #echo "  $index. $key (${IP_DIR_MAP[$key]})"
-    if [[ $index -eq $IP_INDEX ]]; then 
-      SELECTED_IPs=$key
-      break
-    fi
-    ((index++))
-  done
-fi
+SELECTED_IPs=$IPs
 
 echo "About to do: ${OPERATION_MAP[$SELECTED_OPERATION]} for the following:"
 for IP in $SELECTED_IPs; do
