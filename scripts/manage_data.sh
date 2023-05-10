@@ -20,7 +20,7 @@ for IP in $IPs; do
 	  ACTIVE_STRING="NOT RUNNING"
 	fi
 	DIRNAME="./$ARCHITECTURE-$NUM_COMPUTE_NODES-compute-nodes"
-	NUMLOCALFILEFOUND=$(ls "$DIRNAME"/'*.json' 2> /dev/null | wc -l)
+	NUMLOCALFILEFOUND=$(find "$DIRNAME" -name '*.json' | wc -l)
 	printf '  - %-*s' 19 "$IP: "
 	printf '%-*s' 11 "$ARCHITECTURE"
 	echo "  $NUM_COMPUTE_NODES compute nodes ($NUMFILEFOUND remote files, $NUMLOCALFILEFOUND local files, *$ACTIVE_STRING*)"
