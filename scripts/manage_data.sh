@@ -10,7 +10,7 @@ echo "These IPs below are hardcoded into the script:"
 for IP in $IPs; do
 	NUMFILEFOUND=$(ssh cc@"$IP" ls 'tracing_output/*.json' | wc -l)
 	FILEFOUND=$(ssh cc@"$IP" ls 'tracing_output/*.json' | head -1)
-	ACTIVE=$(ssh cc@129.114.108.220 ps auxww | grep run_all_ex | wc -l)
+	ACTIVE=$(ssh cc@$IP ps auxww | grep run_all_ex | wc -l)
 	ARCHITECTURE=$(echo "$FILEFOUND" | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
 	NUM_COMPUTE_NODES=$(echo "$FILEFOUND" | sed 's/[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-\([^-]*\)-.*/\1/')
 	ACTIVE_STRING=""
