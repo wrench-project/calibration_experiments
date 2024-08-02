@@ -20,7 +20,7 @@ from wfcommons.wfbench import WorkflowBenchmark
 from wfcommons.wfbench.translator import PegasusTranslator
 from wfcommons.wfinstances import PegasusLogsParser
 
-architectures = ["haswell", "skylake", "cascadelake"]
+architectures = ["haswell", "skylake", "cascadelake", "icelake"]
 workflow_recipe_map = {"seismology": SeismologyRecipe,
                        "montage": MontageRecipe,
                        "genome": GenomeRecipe,
