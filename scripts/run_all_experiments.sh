@@ -24,6 +24,10 @@ fi
 if [[ $(grep -c "Gold 6242 CPU" /proc/cpuinfo) -ne "0" ]] ; then
   ARCHITECTURE="cascadelake"
 fi
+if [[ $(grep -c "Platinum 8380 CPU" /proc/cpuinfo) -ne "0" ]] ; then
+  ARCHITECTURE="icelake"
+fi
+
 
 if [[ -z $ARCHITECTURE ]] ; then
   echo "Error: Cannot determine architecture. Aborting"

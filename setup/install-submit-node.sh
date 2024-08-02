@@ -6,6 +6,9 @@ apt-get update && apt-get install ufw
 
 ufw disable
 
+# install pip
+apt-get install -y python3-pip
+
 # install HTCondor
 apt-get install -y curl
 curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run --channel stable
