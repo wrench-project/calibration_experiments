@@ -481,7 +481,7 @@ def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_wo
         benchmark = WorkflowBenchmark(recipe=workflow_recipe_map[workflow], num_tasks=desired_num_tasks)
         benchmark_path = benchmark.create_benchmark(save_dir=work_dir,
                                                     cpu_work=cpu_work,
-                                                    data=data_footprint / (1000.0 * 1000.0),
+                                                    data=int(data_footprint / (1000.0 * 1000.0)),
                                                     percent_cpu=cpu_fraction,
                                                     lock_files_folder=lock_files_folder)
     else:
