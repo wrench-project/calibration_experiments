@@ -66,6 +66,6 @@ cp bin/cpu-benchmark /home/cc
 cd /home/cc
 scripts="run-workflow.sh run_experiments.py run_all_experiments.sh"
 for script in $scripts; do
-	cp calibration_experiments/scripts/$script .
+	cp pegasus_workflows_on_chameleon/scripts/$script .
 	chown cc:cc $script
 done
