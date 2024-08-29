@@ -62,6 +62,14 @@ pip install -e .
 #g++ -o cpu-benchmark cpu-benchmark.cpp
 cp bin/cpu-benchmark /home/cc
 
+# fetch the 1.4 WfFormat schema
+cd /home/cc
+wget https://github.com/wfcommons/WfFormat/archive/refs/tags/v1.4.tar.gz
+tar -xzf v1.4.tar.gz
+cd WfFormat-1.4
+cp wfcommons-schema.json /home/cc
+
+
 # Put relevant scripts in $HOME
 cd /home/cc
 scripts="run-workflow.sh run_experiments.py run_all_experiments.sh"

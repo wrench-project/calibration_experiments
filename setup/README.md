@@ -1,5 +1,7 @@
 # Installing on Chameleon Cloud
 
+Make sure you're on Ubuntu22 so that Python is recent-ish
+
 ## Installing Submit Node
 
 1. SSH to the submit node instance (`ssh cc@<PUBLIC_IP_ADDRESS>`)

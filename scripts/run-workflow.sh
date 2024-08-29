@@ -7,8 +7,8 @@ fi
 
 # reorganize work dir
 cd "$1" || exit
-#mkdir data
-#mv *.txt data
+mkdir data
+mv *.txt data
 cp "$2"/cpu-benchmark .
 
 # generate pegasus YAML workflow
