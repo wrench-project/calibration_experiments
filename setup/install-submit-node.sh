@@ -53,7 +53,7 @@ apt-get install -y pegasus=5.0.3-1+ubuntu18
 cd /home/cc
 git clone https://github.com/wfcommons/wfcommons
 cd wfcommons
-git checkout 83a9ba730f44f984c64de877e1f202b0d64487ad
+#git checkout 83a9ba730f44f984c64de877e1f202b0d64487ad
 chown -R cc:cc /home/cc/wfcommons
 #git checkout feature/wfbench
 pip install python-dateutil==2.8.2
