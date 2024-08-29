@@ -2,6 +2,7 @@
 
 CONDOR_HOST=$1
 
+
 # install HTCondor
 apt-get update && apt-get install -y curl
 curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run --channel stable
@@ -38,6 +39,7 @@ sleep 10
 
 # install dependencies
 cd $HOME
+apt-get install -y python3-pip
 pip install pandas filelock
 apt install -y stress-ng
 mkdir -p /var/lib/condor
