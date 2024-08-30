@@ -50,95 +50,111 @@ def process_workflow(workflow_name):
 
     print(workflow_name + ":")
 
+    do_compute_node_sanity = False
+    do_cpu_work_sanity = False
+    do_data_footprint_sanity = True
+
     # Looking at CPU work sanity
-    num_sanity = 0
-    num_insanity = 0
-    for num_task in num_tasks:
-        cpu_works, data_footprints, architectures, num_compute_nodes = get_all_others(workflow_name, num_tasks)
-        for architecture in architectures:
-            # print(f"{workflow_name}:{num_task}:{architecture}")
+    if do_cpu_work_sanity:
+        num_sanity = 0
+        num_insanity = 0
+        for num_task in num_tasks:
+            cpu_works, data_footprints, architectures, num_compute_nodes = get_all_others(workflow_name, num_tasks)
+            for architecture in architectures:
+                # print(f"{workflow_name}:{num_task}:{architecture}")
 
-            for data_footprint in data_footprints:
-                for num_nodes in num_compute_nodes:
-                    for i in range(0, len(cpu_works) - 1):
-                        files_curr = glob.glob(f"{workflow_name}-{num_task}-{cpu_works[i]}-0.6"
-                                               f"-{data_footprint}-{architecture}-{num_nodes}-*.json")
-                        makespans_curr = sorted(get_makespans(files_curr))
-                        if not makespans_curr:
-                            continue
-                        files_next = glob.glob(f"{workflow_name}-{num_task}-{cpu_works[i + 1]}-0.6"
-                                               f"-{data_footprint}-{architecture}-{num_nodes}-*.json")
-                        makespans_next = sorted(get_makespans(files_next))
-                        if not makespans_next:
-                            continue
+                for data_footprint in data_footprints:
+                    for num_nodes in num_compute_nodes:
+                        for i in range(0, len(cpu_works) - 1):
+                            files_curr = glob.glob(f"{workflow_name}-{num_task}-{cpu_works[i]}-0.6"
+                                                   f"-{data_footprint}-{architecture}-{num_nodes}-*.json")
+                            makespans_curr = sorted(get_makespans(files_curr))
+                            if not makespans_curr:
+                                continue
+                            try:
+                                files_next = glob.glob(f"{workflow_name}-{num_task}-{cpu_works[i + 1]}-0.6"
+                                                       f"-{data_footprint}-{architecture}-{num_nodes}-*.json")
+                            except:
+                                continue
+                            makespans_next = sorted(get_makespans(files_next))
+                            if not makespans_next:
+                                continue
 
-                        # print(f"{makespans_curr}  {makespans_next}")
-                        # if max(makespans_curr) > min(makespans_next):
-                        if mean(makespans_curr) > mean(makespans_next):
-                            num_insanity += 1
-                        else:
-                            num_sanity += 1
-    print(f"  CPU work sanity={num_sanity}  insanity={num_insanity}")
+                            # print(f"{makespans_curr}  {makespans_next}")
+                            # if max(makespans_curr) > min(makespans_next):
+                            if mean(makespans_curr) > mean(makespans_next):
+                                num_insanity += 1
+                            else:
+                                num_sanity += 1
+        print(f"  CPU work sanity={num_sanity}  insanity={num_insanity}")
 
     # Looking at data footprint sanity
-    num_sanity = 0
-    num_insanity = 0
-    for num_task in num_tasks:
-        cpu_works, data_footprints, architectures, num_compute_nodes = get_all_others(workflow_name, num_tasks)
-        for architecture in architectures:
-            # print(f"{workflow_name}:{num_task}:{architecture}")
+    if do_data_footprint_sanity:
+        num_sanity = 0
+        num_insanity = 0
+        for num_task in num_tasks:
+            cpu_works, data_footprints, architectures, num_compute_nodes = get_all_others(workflow_name, num_tasks)
+            for architecture in architectures:
+                # print(f"{workflow_name}:{num_task}:{architecture}")
 
-            for cpu_work in cpu_works:
-                for num_nodes in num_compute_nodes:
-                    for i in range(0, len(data_footprints) - 1):
-                        files_curr = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
-                                               f"-{data_footprints[i]}-{architecture}-{num_nodes}-*.json")
-                        makespans_curr = sorted(get_makespans(files_curr))
-                        if not makespans_curr:
-                            continue
-                        files_next = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
-                                               f"-{data_footprints[i+1]}-{architecture}-{num_nodes}-*.json")
-                        makespans_next = sorted(get_makespans(files_next))
-                        if not makespans_next:
-                            continue
+                for cpu_work in cpu_works:
+                    for num_nodes in num_compute_nodes:
+                        for i in range(0, len(data_footprints) - 1):
+                            files_curr = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
+                                                   f"-{data_footprints[i]}-{architecture}-{num_nodes}-*.json")
+                            makespans_curr = sorted(get_makespans(files_curr))
+                            if not makespans_curr:
+                                continue
+                            try:
+                                files_next = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
+                                                       f"-{data_footprints[i+1]}-{architecture}-{num_nodes}-*.json")
+                            except:
+                                continue
+                            makespans_next = sorted(get_makespans(files_next))
+                            if not makespans_next:
+                                continue
 
-                        # print(f"{makespans_curr}  {makespans_next}")
-                        # if max(makespans_curr) > min(makespans_next):
-                        if mean(makespans_curr) > mean(makespans_next):
-                            num_insanity += 1
-                        else:
-                            num_sanity += 1
-    print(f"  Data footprint sanity={num_sanity}  insanity={num_insanity}")
+                            # print(f"{makespans_curr}  {makespans_next}")
+                            # if max(makespans_curr) > min(makespans_next):
+                            if mean(makespans_curr) > mean(makespans_next):
+                                num_insanity += 1
+                            else:
+                                num_sanity += 1
+        print(f"  Data footprint sanity={num_sanity}  insanity={num_insanity}")
 
-    # Looking at compute node sanity
-    num_sanity = 0
-    num_insanity = 0
-    for num_task in num_tasks:
-        cpu_works, data_footprints, architectures, num_compute_nodes = get_all_others(workflow_name, num_tasks)
-        for architecture in architectures:
-            # print(f"{workflow_name}:{num_task}:{architecture}")
+    if do_compute_node_sanity:
+        # Looking at compute node sanity
+        num_sanity = 0
+        num_insanity = 0
+        for num_task in num_tasks:
+            cpu_works, data_footprints, architectures, num_compute_nodes = get_all_others(workflow_name, num_tasks)
+            for architecture in architectures:
+                # print(f"{workflow_name}:{num_task}:{architecture}")
 
-            for cpu_work in cpu_works:
-                for data_footprint in data_footprints:
-                    for i in range(0, len(num_compute_nodes) - 1):
-                        files_curr = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
-                                               f"-{data_footprint}-{architecture}-{num_compute_nodes[i]}-*.json")
-                        makespans_curr = sorted(get_makespans(files_curr))
-                        if not makespans_curr:
-                            continue
-                        files_next = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
-                                               f"-{data_footprint}-{architecture}-{num_compute_nodes[i+1]}-*.json")
-                        makespans_next = sorted(get_makespans(files_next))
-                        if not makespans_next:
-                            continue
+                for cpu_work in cpu_works:
+                    for data_footprint in data_footprints:
+                        for i in range(0, len(num_compute_nodes) - 1):
+                            files_curr = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
+                                                   f"-{data_footprint}-{architecture}-{num_compute_nodes[i]}-*.json")
+                            makespans_curr = sorted(get_makespans(files_curr))
+                            if not makespans_curr:
+                                continue
+                            try:
+                                files_next = glob.glob(f"{workflow_name}-{num_task}-{cpu_work}-0.6"
+                                                       f"-{data_footprint}-{architecture}-{num_compute_nodes[i+1]}-*.json")
+                            except:
+                                continue
+                            makespans_next = sorted(get_makespans(files_next))
+                            if not makespans_next:
+                                continue
 
-                        # print(f"{makespans_curr}  {makespans_next}")
-                        # if min(makespans_curr) < max(makespans_next):
-                        if mean(makespans_curr) < mean(makespans_next):
-                            num_insanity += 1
-                        else:
-                            num_sanity += 1
-    print(f"  Compute node sanity={num_sanity}  insanity={num_insanity}")
+                            # print(f"{makespans_curr}  {makespans_next}")
+                            # if min(makespans_curr) < max(makespans_next):
+                            if mean(makespans_curr) < mean(makespans_next):
+                                num_insanity += 1
+                            else:
+                                num_sanity += 1
+        print(f"  Compute node sanity={num_sanity}  insanity={num_insanity}")
 
 
 def main():
