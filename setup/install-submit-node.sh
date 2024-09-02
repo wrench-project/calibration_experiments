@@ -47,7 +47,8 @@ systemctl restart condor
 wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | sudo apt-key add -
 echo 'deb [arch=amd64] http://download.pegasus.isi.edu/pegasus/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/pegasus.list
 apt-get update
-apt-get install -y pegasus=5.0.3-1+ubuntu18
+#apt-get install -y pegasus=5.0.3-1+ubuntu18
+apt-get install -y pegasus
 
 # install WfCommons
 cd /home/cc
