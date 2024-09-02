@@ -298,7 +298,7 @@ def create_chain_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_footpr
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
-                "program": str(pathlib.Path.home()) + "/wfcommons/wfcommons/wfbench/wfbench.py",
+                "program": str(pathlib.Path.home()) + "/wfcommons/bin/wfbench",
                 "arguments": get_arguments(i)
             },
             "parents": get_parents(i),
@@ -447,7 +447,7 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
             "id": str(i).zfill(8),
             "type": "compute",
             "command": {
-                "program": str(pathlib.Path.home()) + "/wfcommons/wfcommons/wfbench/wfbench.py",
+                "program": str(pathlib.Path.home()) + "/wfcommons/bin/wfbench",
                 "arguments": get_arguments(i)
             },
             "parents": get_parents(i),
