@@ -24,7 +24,7 @@ echo "Waiting for workflow execution to complete..."
 
 while [[ -f $PID_FILE ]]
 do
-  sleep 90
+  sleep 20
 done
 
 echo "Workflow execution completed."
