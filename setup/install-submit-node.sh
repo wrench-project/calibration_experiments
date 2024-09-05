@@ -62,6 +62,7 @@ pip install -e .
 #cd bin
 #g++ -o cpu-benchmark cpu-benchmark.cpp
 cp bin/cpu-benchmark /home/cc
+cp /home/cc/wfcommons/bin/wfbench /usr/local/bin/
 
 # fetch the 1.4 WfFormat schema
 cd /home/cc
