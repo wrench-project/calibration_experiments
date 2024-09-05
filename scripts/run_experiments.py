@@ -473,7 +473,8 @@ def create_forkjoin_workflow(desired_num_tasks, cpu_fraction, cpu_work, data_foo
 
 
 def create_benchmark(work_dir, workflow, desired_num_tasks, cpu_fraction, cpu_work, data_footprint):
-    lock_files_folder = pathlib.Path("/var/lib/condor/execute")
+    #lock_files_folder = pathlib.Path("/var/lib/condor/execute")
+    lock_files_folder = pathlib.Path("/tmp/")
     os.system(f"sudo chmod 777 {lock_files_folder}")
 
     if workflow_recipe_map[workflow]:
