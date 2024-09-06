@@ -45,8 +45,10 @@ fi
 # DO NOT CHANGE
 CPU_FRACTION=1.0
 
+/bin/rm -rf /home/cc/wfbench-workflow/
+
 # Chain
-./run_experiments.py  -a "${ARCHITECTURE}" -w chain -n "${NUM_COMPUTE_NODES}" -t "${NUM_TRIALS}" -c 0 500 1000 5000 50000 -f "${CPU_FRACTION}" -d 0 150000000 1500000000 15000000000 -o ${OUTPUT_DIR} -S 1 5 10
+./run_experiments.py  -a "${ARCHITECTURE}" -w chain -n "${NUM_COMPUTE_NODES}" -t "${NUM_TRIALS}" -c 0 500 1000 5000 50000 -f "${CPU_FRACTION}" -d 0 150000000 1500000000 15000000000 -o ${OUTPUT_DIR} -S 2 5 10
 
 # Forkjoin
 ./run_experiments.py  -a "${ARCHITECTURE}" -w forkjoin -n ${NUM_COMPUTE_NODES} -t "${NUM_TRIALS}" -c 0 500 1000 5000 50000 -f "${CPU_FRACTION}" -d 0 150000000 1500000000 15000000000 -o ${OUTPUT_DIR} -S 10 18 25 34 50 66 100 130 200
