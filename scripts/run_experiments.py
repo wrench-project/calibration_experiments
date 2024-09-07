@@ -604,9 +604,12 @@ def main():
                         if glob.glob(str(output_dir.absolute()) + "/" + tar_file_to_generate_prefix + "-*.json"):
                             sys.stderr.write(f"File {tar_file_to_generate_prefix}: already exists. [SKIPPING]\n")
                             continue
-                        else:
-                            sys.stderr.write(f"RUNNING WORKFLOW {tar_file_to_generate_prefix}...\n")
 
+                        if (float(data_footprint) / float(desired_num_tasks) > 80*1000*1000):
+                            sys.stderr.write("File sizes will likely by above 80MB. [SKIPPING]\n")
+                            continue
+
+                        sys.stderr.write(f"RUNNING WORKFLOW {tar_file_to_generate_prefix}...\n")
                         # Create a fresh working directory
                         work_dir = create_work_dir(str(pathlib.Path.home()) + "/wfbench-workflow")
 
